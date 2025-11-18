@@ -1,0 +1,7 @@
+﻿services:
+  keepfit.backend.api:
+    image: keepfit.backend.api
+    build:
+      context: .
+      dockerfile: KeepFit.Backend.API/Dockerfile
+
