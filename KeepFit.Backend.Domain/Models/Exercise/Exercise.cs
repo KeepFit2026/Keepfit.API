@@ -1,4 +1,6 @@
-﻿namespace KeepFit.Backend.Domain.Models.Exercise;
+﻿using KeepFit.Backend.Domain.Models.Program;
+
+namespace KeepFit.Backend.Domain.Models.Exercise;
 
 public class Exercise
 {
@@ -16,4 +18,9 @@ public class Exercise
     /// Description de l'exercice
     /// </summary>
     public string Description { get; set; }
+    
+    /// <summary>
+    /// Navigation vers la table de jointure
+    /// </summary>
+    public List<ProgramExercise> ProgramExercises { get; set; } = new List<ProgramExercise>();
 }

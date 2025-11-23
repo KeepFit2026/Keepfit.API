@@ -29,6 +29,7 @@ builder.Services.AddScoped<IGenericService<Exercise>, GenericService<Exercise>>(
 
 builder.Services.AddScoped<IProgramService, ProgramService>();
 builder.Services.AddScoped<IGenericService<FitnessProgram>, GenericService<FitnessProgram>>();
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 // Build the app
 var app = builder.Build();

@@ -14,5 +14,14 @@ namespace KeepFit.Backend.Application.Contracts
         Task<ProgramResponse?> GetAsync(Guid id, CancellationToken cancellationToken = default);
         Task<ProgramResponse> CreateProgramAsync(ProgramDto dto, CancellationToken cancellationToken = default);
         Task<bool> DeleteProgramAsync(Guid id, CancellationToken cancellationToken = default);
+        
+        /// <summary>
+        /// Ajoute une exercice à un programme.
+        /// </summary>
+        /// <param name="programId">Id du programme</param>
+        /// <param name="exerciseId">Id de l'exercice</param>
+        /// <param name="cancellationToken">Cancellartion Token</param>
+        /// <returns></returns>
+        Task<bool> AddExerciseToProgramAsync(Guid programId, Guid exerciseId, CancellationToken cancellationToken = default);
     }
 }

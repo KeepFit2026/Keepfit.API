@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace KeepFit.Backend.Domain.Models.Program
+﻿namespace KeepFit.Backend.Domain.Models.Program
 {
     public class FitnessProgram
     {
@@ -17,11 +11,15 @@ namespace KeepFit.Backend.Domain.Models.Program
         /// Nom du programme.
         /// </summary>
         public string Name { get; set; }
-
-
+        
         /// <summary>
         /// Description du programme
         /// </summary>
         public string Description { get; set; }
+        
+        /// <summary>
+        /// Navigation vers la table de jointure
+        /// </summary>
+        public List<ProgramExercise> ProgramExercises { get; set; } = new List<ProgramExercise>();
     }
 }

@@ -95,7 +95,25 @@ namespace KeepFit.Backend.API.Controller
             catch (NotFoundException message)
             {
                 return NotFound(new ApiResponse<ExerciseResponse>
-                   (false, null, message.Message));
+                   (true, null, message.Message));
+            }
+        }
+
+        [HttpGet(ApiRoutes.Programs.AddExerciseToProgram)]
+        public async Task<IActionResult> AddExerciseToProgramAsync(
+            [FromRoute] Guid programId,
+            [FromRoute] Guid exerciseId,
+            CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                var result = await service.AddExerciseToProgramAsync(programId, exerciseId, cancellationToken);
+                return Ok(new ApiResponse<bool>(true, true, "Exercice ajouté !"));
+            }
+            catch (NotFoundException message)
+            {
+                return NotFound(new ApiResponse<ProgramExerciseResponse>
+                    (true, null, message.Message));
             }
         }
     }
