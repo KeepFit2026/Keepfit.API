@@ -1,15 +1,19 @@
 using KeepFit.Backend.Application.Contracts;
 using KeepFit.Backend.Infrastructure;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 
 namespace KeepFit.Backend.Application.Services;
 
-public class UnitOfWork(
-    AppDbContext context, 
-    IDbContextTransaction transaction) : IUnitOfWork
+public class UnitOfWork : IUnitOfWork
 {
-    private readonly AppDbContext _context = context ?? throw new ArgumentNullException(nameof(context));
-    private IDbContextTransaction _transaction = transaction;
+    private readonly AppDbContext _context;
+    private IDbContextTransaction? _transaction; 
+
+    public UnitOfWork(AppDbContext context) 
+    {
+        _context = context ?? throw new ArgumentNullException(nameof(context));
+    }
 
     public async Task<int> SaveAsync(CancellationToken cancellationToken = default)
     {
@@ -27,7 +31,11 @@ public class UnitOfWork(
         try
         {
             await _context.SaveChangesAsync(cancellationToken);
-            await _transaction.CommitAsync(cancellationToken);
+            
+            if (_transaction != null)
+            {
+                await _transaction.CommitAsync(cancellationToken);
+            }
         }
         catch
         {
@@ -36,16 +44,22 @@ public class UnitOfWork(
         }
         finally
         {
-            await _transaction.DisposeAsync();
-            _transaction = null;
+            if (_transaction != null)
+            {
+                await _transaction.DisposeAsync();
+                _transaction = null;
+            }
         }
     }
 
     public async Task RollbackTransactionAsync(CancellationToken cancellationToken = default)
     {
-        await _transaction.RollbackAsync(cancellationToken);
-        await _transaction.DisposeAsync();
-        _transaction = null;
+        if (_transaction != null)
+        {
+            await _transaction.RollbackAsync(cancellationToken);
+            await _transaction.DisposeAsync();
+            _transaction = null;
+        }
     }
 
     public void Dispose()

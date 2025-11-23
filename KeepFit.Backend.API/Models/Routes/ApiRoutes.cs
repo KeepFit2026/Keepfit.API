@@ -9,6 +9,7 @@ public class ApiRoutes
         public const string GetExercises = baseUrl + "exercises/{id:guid}";
         public const string DeleteExercises = baseUrl + "exercises/{id:guid}";
         public const string CreateExercises = baseUrl + "exercises";
+        public const string GetProgramsFromExercise = baseUrl + "exercises/{id:guid}/programs";
     }
 
     public class Programs

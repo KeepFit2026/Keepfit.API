@@ -3,6 +3,7 @@ using KeepFit.Backend.Application.Contracts;
 using KeepFit.Backend.Application.DTOs.Exercises;
 using KeepFit.Backend.Application.DTOs.Responses;
 using KeepFit.Backend.Domain.Exceptions;
+using KeepFit.Backend.Domain.Models.Program;
 using Microsoft.AspNetCore.Mvc;
 
 namespace KeepFit.Backend.API.Controller;
@@ -104,6 +105,22 @@ public class ExerciseController(IExerciseService service) : ControllerBase
         catch (NotFoundException message)
         {
             return NotFound(new ApiResponse<bool>(true, false, "Erreur: " + message.Message));
+        }
+    }
+
+    [HttpGet(ApiRoutes.Exercises.GetProgramsFromExercise)]
+    public async Task<IActionResult> GetProgramsFromExercise(
+        [FromRoute] Guid id,
+        CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var result = await service.GetProgramsFromExercise(id, cancellationToken);
+            return Ok(new ApiResponse<List<ProgramResponse>>(true, result, "OUI"));
+        }
+        catch (NotFoundException message)
+        {
+            return NotFound(new ApiResponse<List<ProgramResponse>?>(true, null, message.Message));
         }
     }
 }

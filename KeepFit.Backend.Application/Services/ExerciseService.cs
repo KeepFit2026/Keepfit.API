@@ -2,24 +2,38 @@ using AutoMapper;
 using KeepFit.Backend.Application.Contracts;
 using KeepFit.Backend.Application.DTOs.Exercises;
 using KeepFit.Backend.Application.DTOs.Responses;
-using KeepFit.Backend.Domain;
 using KeepFit.Backend.Domain.Exceptions;
 using KeepFit.Backend.Domain.Models.Exercise;
+using KeepFit.Backend.Domain.Models.Program;
 using KeepFit.Backend.Infrastructure;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualStudio.TestPlatform.TestHost;
 
 namespace KeepFit.Backend.Application.Services;
 
 public class ExerciseService(
     IGenericService<Exercise> genericService,
-    IMapper mapper
+    IMapper mapper,
+    AppDbContext context
     ) : IExerciseService
 {
     public async Task<List<ExerciseResponse>> GetAllAsync(
         CancellationToken cancellationToken = default)
     {
-        var exercises = await genericService.GetAllAsync(cancellationToken);
+        var exercises = await genericService.GetAllAsync(
+            predicate: null, 
+            cancellationToken
+            );
         if(exercises.Count == 0) throw new NotFoundException("Aucun exercice trouve");
-        return mapper.Map<List<ExerciseResponse>>(exercises);
+        
+        var response = mapper.Map<List<ExerciseResponse>>(exercises);
+
+        foreach (var exercise in response)
+        {
+            exercise.ProgramsLink = $"exercises/{exercise.Id}/programs";
+        }
+
+        return response;
     }
 
     public async Task<ExerciseResponse> GetAsync(
@@ -48,5 +62,19 @@ public class ExerciseService(
         var result = await genericService.DeleteAsync(id, cancellationToken);
         if(!result) throw new NotFoundException("Aucun exercice trouve");
         return result;
+    }
+
+    public async Task<List<ProgramResponse>> GetProgramsFromExercise(
+        Guid exerciseId,
+        CancellationToken cancellationToken = default)
+    {
+        var programs = await context.ProgramExercise
+            .Where(pe => pe.ExerciseId == exerciseId)
+            .Select(pe => pe.Program)
+            .ToListAsync(cancellationToken);
+        
+        if(programs.Count == 0) throw new NotFoundException("Aucun exercice trouve");
+        
+        return mapper.Map<List<ProgramResponse>>(programs);
     }
 }

@@ -20,7 +20,10 @@ public class ProgramService(
     
     public async Task<List<ProgramResponse>> GetAllAsync(CancellationToken cancellationToken = default)
     {
-        var programs = await genericService.GetAllAsync(cancellationToken);
+        var programs = await genericService.GetAllAsync(
+            predicate: null,
+            cancellationToken
+            );
         if (programs.Count == 0) throw new NotFoundException("Aucun programme trouvé");
         return mapper.Map<List<ProgramResponse>>(programs);
     }

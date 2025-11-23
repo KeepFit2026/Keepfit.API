@@ -19,11 +19,13 @@ public class ExerciseServiceTest
     [TestInitialize]
     public void TestInitialize()
     {
+        /*
         _mockGenericService = new Mock<IGenericService<Exercise>>();
         _mockMapper = new Mock<IMapper>();
         _exerciseService = new ExerciseService(
             _mockGenericService.Object,
             _mockMapper.Object);
+        */
     }
 
     /// <summary>

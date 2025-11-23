@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using KeepFit.Backend.Application.Contracts;
 using KeepFit.Backend.Infrastructure;
 using Microsoft.EntityFrameworkCore;
@@ -15,9 +16,17 @@ public class GenericService<T> : IGenericService<T> where T : class
         _dbSet = _context.Set<T>();
     }
 
-    public async Task<List<T>> GetAllAsync(CancellationToken cancellationToken = default)
+    public async Task<List<T>> GetAllAsync(
+        Expression<Func<T, bool>>? predicate = null,
+        CancellationToken cancellationToken = default)
     {
-        return await _dbSet.ToListAsync(cancellationToken: cancellationToken);
+        IQueryable<T> query = _dbSet;
+        if (predicate != null)
+        {
+            query = query.Where(predicate);
+        }
+        
+        return await query.ToListAsync(cancellationToken: cancellationToken);
     }
 
     public async Task<T?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)

@@ -1,3 +1,5 @@
+using System.Linq.Expressions;
+
 namespace KeepFit.Backend.Application.Contracts;
 
 public interface IGenericService<T> where T : class
@@ -7,7 +9,8 @@ public interface IGenericService<T> where T : class
     /// </summary>
     /// <typeparam name="T">un type T</typeparam>
     /// <returns></returns>
-    Task<List<T>> GetAllAsync(CancellationToken cancellationToken = default);
+    Task<List<T>> GetAllAsync(Expression<Func<T, bool>>? predicate = null,
+        CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Récupère un élement

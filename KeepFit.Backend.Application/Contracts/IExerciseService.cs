@@ -1,5 +1,6 @@
 using KeepFit.Backend.Application.DTOs.Exercises;
 using KeepFit.Backend.Application.DTOs.Responses;
+using KeepFit.Backend.Domain.Models.Program;
 
 namespace KeepFit.Backend.Application.Contracts;
 
@@ -34,5 +35,13 @@ public interface IExerciseService
     /// <param name="cancellationToken">CancellationToken</param>
     /// <returns></returns>
     Task<bool> DeleteExerciseAsync(Guid id, CancellationToken cancellationToken = default);
+    
+    /// <summary>
+    /// Récupère tous les programmes associés à cette exercice.
+    /// </summary>
+    /// <param name="exerciseId">Id de l'exercice.</param>
+    /// <param name="cancellationToken">Cancellation Token</param>
+    /// <returns></returns>
+    Task<List<ProgramResponse>> GetProgramsFromExercise(Guid exerciseId, CancellationToken cancellationToken = default);
 
 }

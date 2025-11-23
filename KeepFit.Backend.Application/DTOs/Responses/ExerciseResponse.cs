@@ -16,4 +16,9 @@ public class ExerciseResponse
     /// Description de l'exercice.
     /// </summary>
     public string Description { get; set; }
+    
+    /// <summary>
+    /// Lien vers les programmes associés à l'exercice.
+    /// </summary>
+    public string ProgramsLink { get; set; }
 }
