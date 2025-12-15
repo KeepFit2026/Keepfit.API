@@ -22,16 +22,9 @@ public class GenericService<T> : IGenericService<T> where T : class
     {
         IQueryable<T> query = _dbSet;
         if (predicate != null)
-        {
             query = query.Where(predicate);
-        }
         
         return await query.ToListAsync(cancellationToken: cancellationToken);
-    }
-
-    public async Task<T?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
-    {
-        return await _dbSet.FindAsync([id], cancellationToken: cancellationToken);
     }
 
     public async Task<T> CreateAsync(T entity, CancellationToken cancellationToken = default)

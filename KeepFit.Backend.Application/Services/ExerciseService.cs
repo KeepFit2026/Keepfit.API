@@ -4,10 +4,8 @@ using KeepFit.Backend.Application.DTOs.Exercises;
 using KeepFit.Backend.Application.DTOs.Responses;
 using KeepFit.Backend.Domain.Exceptions;
 using KeepFit.Backend.Domain.Models.Exercise;
-using KeepFit.Backend.Domain.Models.Program;
 using KeepFit.Backend.Infrastructure;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.VisualStudio.TestPlatform.TestHost;
 
 namespace KeepFit.Backend.Application.Services;
 
@@ -21,9 +19,9 @@ public class ExerciseService(
         CancellationToken cancellationToken = default)
     {
         var exercises = await genericService.GetAllAsync(
-            predicate: null, 
-            cancellationToken
-            );
+            predicate: null,
+            cancellationToken);
+        
         if(exercises.Count == 0) throw new NotFoundException("Aucun exercice trouve");
         
         var response = mapper.Map<List<ExerciseResponse>>(exercises);
@@ -40,9 +38,18 @@ public class ExerciseService(
         Guid id,
         CancellationToken cancellationToken = default)
     {
-        var exercise = await genericService.GetByIdAsync(id, cancellationToken);
-        if(exercise == null) throw new NotFoundException("Aucun exercice trouve");
-        return mapper.Map<ExerciseResponse>(exercise);
+        var exercises = await genericService.GetAllAsync(
+            predicate: ex => ex.Id == id,
+            cancellationToken: cancellationToken);
+
+        if (exercises == null || exercises.Count == 0) throw new NotFoundException("Aucun exercice trouve");
+        
+        var exercise = exercises.First();
+        
+        var response = mapper.Map<ExerciseResponse>(exercise);
+        response.ProgramsLink = $"exercises/{response.Id}/programs";
+
+        return response;
     }
 
     public async Task<ExerciseResponse> CreateExerciseAsync(
@@ -75,6 +82,17 @@ public class ExerciseService(
         
         if(programs.Count == 0) throw new NotFoundException("Aucun exercice trouve");
         
+        return mapper.Map<List<ProgramResponse>>(programs);
+    }
+
+    public async Task<List<ProgramResponse>> GetProgramsWitoutNotExercises(Guid exerciseId,
+        CancellationToken cancellationToken = default)
+    {
+        var programs = await context.FitnessProgram
+            .Where(p => p.ProgramExercises.All(pe => pe.ExerciseId != exerciseId))
+            .ToListAsync(cancellationToken);
+        
+        if(programs.Count == 0) throw new NotFoundException("Aucun programme trouve");
         return mapper.Map<List<ProgramResponse>>(programs);
     }
 }

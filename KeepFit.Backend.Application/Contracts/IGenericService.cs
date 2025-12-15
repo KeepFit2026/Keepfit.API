@@ -4,22 +4,15 @@ namespace KeepFit.Backend.Application.Contracts;
 
 public interface IGenericService<T> where T : class
 {
-    /// <summary>
-    /// Récupère tous les élements
-    /// </summary>
-    /// <typeparam name="T">un type T</typeparam>
-    /// <returns></returns>
-    Task<List<T>> GetAllAsync(Expression<Func<T, bool>>? predicate = null,
-        CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Récupère un élement
+    /// Récupère tous les élements selon ou non un predicat
     /// </summary>
-    /// <param name="id">l'id de l'élement</param>
-    /// <param name="cancellationToken">CancellationToken</param>
-    /// <typeparam name="T">un type T</typeparam>
+    /// <param name="predicate">fonction de filtre optionnel</param>
+    /// <param name="cancellationToken">Cancellation Token.</param>
     /// <returns></returns>
-    Task<T?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
+    Task<List<T> > GetAllAsync(Expression<Func<T, bool>>? predicate = null,
+        CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Créer un élement

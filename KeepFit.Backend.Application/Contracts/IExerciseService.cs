@@ -43,5 +43,13 @@ public interface IExerciseService
     /// <param name="cancellationToken">Cancellation Token</param>
     /// <returns></returns>
     Task<List<ProgramResponse>> GetProgramsFromExercise(Guid exerciseId, CancellationToken cancellationToken = default);
+    
+    /// <summary>
+    /// Récupère tous les programmes qui n'appartiennent pas à un exercice.
+    /// </summary>
+    /// <param name="exerciseId">Id de l'exercice</param>
+    /// <param name="cancellationToken">Cancellation Token</param>
+    /// <returns></returns>
+    Task<List<ProgramResponse>> GetProgramsWitoutNotExercises(Guid exerciseId, CancellationToken cancellationToken = default);
 
 }
