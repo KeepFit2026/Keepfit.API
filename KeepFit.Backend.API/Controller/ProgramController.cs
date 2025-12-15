@@ -28,8 +28,7 @@ namespace KeepFit.Backend.API.Controller
             }
             catch (NotFoundException message)
             {
-                return NotFound(new ApiResponse<List<ProgramResponse>>
-                   (false, null, message.Message));
+                return NotFound(new ApiResponse<List<ProgramResponse?>?>(false, null, message.Message));
             }
         }
 
@@ -47,12 +46,12 @@ namespace KeepFit.Backend.API.Controller
             try
             {
                 var result = await service.GetAsync(id, cancellationToken);
-                return Ok(new ApiResponse<ProgramResponse>(
+                return Ok(new ApiResponse<ProgramResponse?>(
                    true, result, "Programme Recupere"));
             }
             catch (NotFoundException message)
             {
-                return NotFound(new ApiResponse<ProgramResponse>
+                return NotFound(new ApiResponse<ProgramResponse?>
                    (false, null, message.Message));
             }
 
@@ -81,7 +80,6 @@ namespace KeepFit.Backend.API.Controller
         /// <param name="id"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-
         [HttpDelete(ApiRoutes.Programs.DeleteProgram)]
         public async Task<IActionResult> DeleteAsync(
       [FromRoute] Guid id,
@@ -90,15 +88,22 @@ namespace KeepFit.Backend.API.Controller
             try
             {
                 var result = await service.DeleteProgramAsync(id, cancellationToken);
-                return Ok(result);
+                return Ok(new ApiResponse<bool>(true, result, "Programme deleting"));
             }
             catch (NotFoundException message)
             {
-                return NotFound(new ApiResponse<ExerciseResponse>
+                return NotFound(new ApiResponse<ExerciseResponse?>
                    (true, null, message.Message));
             }
         }
 
+        /// <summary>
+        /// Ajoute un exerice à un programme.
+        /// </summary>
+        /// <param name="programId">Id du programme</param>
+        /// <param name="exerciseId">Id de l'exercice</param>
+        /// <param name="cancellationToken">Cancellation Token</param>
+        /// <returns></returns>
         [HttpGet(ApiRoutes.Programs.AddExerciseToProgram)]
         public async Task<IActionResult> AddExerciseToProgramAsync(
             [FromRoute] Guid programId,
@@ -107,13 +112,34 @@ namespace KeepFit.Backend.API.Controller
         {
             try
             {
-                var result = await service.AddExerciseToProgramAsync(programId, exerciseId, cancellationToken);
+                await service.AddExerciseToProgramAsync(programId, exerciseId, cancellationToken);
                 return Ok(new ApiResponse<bool>(true, true, "Exercice ajouté !"));
             }
             catch (NotFoundException message)
             {
-                return NotFound(new ApiResponse<ProgramExerciseResponse>
-                    (true, null, message.Message));
+                return NotFound(new ApiResponse<ProgramExerciseResponse?>(true, null, message.Message));
+            }
+        }
+
+        /// <summary>
+        /// Récupère les exercices d'un programme.
+        /// </summary>
+        /// <param name="programId">Id du programme</param>
+        /// <param name="cancellationToken">Cancellation Token</param>
+        /// <returns></returns>
+        [HttpGet(ApiRoutes.Programs.GetExercisesFromProgram)]
+        public async Task<IActionResult> GetExercisesFromProgramAsync(
+            [FromRoute] Guid programId,
+            CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                var result = await service.GetAllExercisesFromProgramAsync(programId, cancellationToken);
+                return Ok(new ApiResponse<List<ExerciseResponse>>(true, result, "Liste des exercices"));
+            }
+            catch (NotFoundException message)
+            {
+                return NotFound(new ApiResponse<List<ExerciseResponse?>?>(true, null, message.Message));
             }
         }
     }

@@ -3,7 +3,6 @@ using KeepFit.Backend.Application.Contracts;
 using KeepFit.Backend.Application.DTOs.Exercises;
 using KeepFit.Backend.Application.DTOs.Responses;
 using KeepFit.Backend.Domain.Exceptions;
-using KeepFit.Backend.Domain.Models.Program;
 using Microsoft.AspNetCore.Mvc;
 
 namespace KeepFit.Backend.API.Controller;
@@ -108,6 +107,12 @@ public class ExerciseController(IExerciseService service) : ControllerBase
         }
     }
 
+    /// <summary>
+    /// Affiche les programmes associés à un seul exercice.
+    /// </summary>
+    /// <param name="id">Id de l'exercice.</param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
     [HttpGet(ApiRoutes.Exercises.GetProgramsFromExercise)]
     public async Task<IActionResult> GetProgramsFromExercise(
         [FromRoute] Guid id,
@@ -117,6 +122,26 @@ public class ExerciseController(IExerciseService service) : ControllerBase
         {
             var result = await service.GetProgramsFromExercise(id, cancellationToken);
             return Ok(new ApiResponse<List<ProgramResponse>>(true, result, "OUI"));
+        }
+        catch (NotFoundException message)
+        {
+            return NotFound(new ApiResponse<List<ProgramResponse>?>(true, null, message.Message));
+        }
+    }
+
+    /// <summary>
+    /// Affiche tous les programmes qui n'appartiennent pas à un exercice.
+    /// </summary>
+    /// <param name="id">Id d'un exercice.</param>
+    /// <returns></returns>
+    [HttpGet(ApiRoutes.Exercises.GetProgramsWitoutNotExercises)]
+    public async Task<IActionResult> GetProgramsWitoutNotExercises(
+        [FromRoute] Guid id)
+    {
+        try
+        {
+            var result = await service.GetProgramsWitoutNotExercises(id);
+            return Ok(new ApiResponse<List<ProgramResponse>?>(true, result, "Listes des programmes"));
         }
         catch (NotFoundException message)
         {
