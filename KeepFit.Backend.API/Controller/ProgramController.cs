@@ -4,6 +4,7 @@ using KeepFit.Backend.Application.DTOs.Responses;
 using KeepFit.Backend.Domain.Exceptions;
 using KeepFit.Backend.Application.Contracts;
 using KeepFit.Backend.Application.DTOs.Programs;
+using KeepFit.Backend.Application.DTOs.Requests;
 
 namespace KeepFit.Backend.API.Controller
 {
@@ -18,11 +19,12 @@ namespace KeepFit.Backend.API.Controller
         /// <returns></returns>
         [HttpGet(ApiRoutes.Programs.GetAllPrograms)]
         public async Task<IActionResult> GetAllAsync(
-      CancellationToken cancellationToken = default)
+            [FromQuery] PaginationFilter filter,
+            CancellationToken cancellationToken = default)
         {
             try
             {
-                var result = await service.GetAllAsync(cancellationToken);
+                var result = await service.GetAllAsync(filter, cancellationToken);
                 return Ok(new ApiResponse<List<ProgramResponse>>
                    (true, result, "Listes des programmes."));
             }
@@ -40,12 +42,14 @@ namespace KeepFit.Backend.API.Controller
         /// <returns></returns>
         [HttpGet(ApiRoutes.Programs.GetProgram)]
         public async Task<IActionResult> GetAsync(
-      [FromRoute] Guid id,
-      CancellationToken cancellationToken = default)
+            PaginationFilter filter,
+            [FromRoute] Guid id,
+            CancellationToken cancellationToken = default
+          )
         {
             try
             {
-                var result = await service.GetAsync(id, cancellationToken);
+                var result = await service.GetAsync(filter, id, cancellationToken);
                 return Ok(new ApiResponse<ProgramResponse?>(
                    true, result, "Programme Recupere"));
             }
@@ -94,30 +98,6 @@ namespace KeepFit.Backend.API.Controller
             {
                 return NotFound(new ApiResponse<ExerciseResponse?>
                    (true, null, message.Message));
-            }
-        }
-
-        /// <summary>
-        /// Ajoute un exerice à un programme.
-        /// </summary>
-        /// <param name="programId">Id du programme</param>
-        /// <param name="exerciseId">Id de l'exercice</param>
-        /// <param name="cancellationToken">Cancellation Token</param>
-        /// <returns></returns>
-        [HttpGet(ApiRoutes.Programs.AddExerciseToProgram)]
-        public async Task<IActionResult> AddExerciseToProgramAsync(
-            [FromRoute] Guid programId,
-            [FromRoute] Guid exerciseId,
-            CancellationToken cancellationToken = default)
-        {
-            try
-            {
-                await service.AddExerciseToProgramAsync(programId, exerciseId, cancellationToken);
-                return Ok(new ApiResponse<bool>(true, true, "Exercice ajouté !"));
-            }
-            catch (NotFoundException message)
-            {
-                return NotFound(new ApiResponse<ProgramExerciseResponse?>(true, null, message.Message));
             }
         }
 

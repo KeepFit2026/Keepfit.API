@@ -11,8 +11,9 @@ public interface IGenericService<T> where T : class
     /// <param name="predicate">fonction de filtre optionnel</param>
     /// <param name="cancellationToken">Cancellation Token.</param>
     /// <returns></returns>
-    Task<List<T> > GetAllAsync(Expression<Func<T, bool>>? predicate = null,
-        CancellationToken cancellationToken = default);
+    Task<(List<T> Data, int TotalRecord)> GetAllAsync(int pageNumber, int pageSize,
+        Expression<Func<T, bool>>? predicate = null, bool asNoTracking = false,
+        CancellationToken cancellationToken = default, params Expression<Func<T, object>>[]? includes);
 
     /// <summary>
     /// Créer un élement

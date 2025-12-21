@@ -16,15 +16,30 @@ public class GenericService<T> : IGenericService<T> where T : class
         _dbSet = _context.Set<T>();
     }
 
-    public async Task<List<T>> GetAllAsync(
-        Expression<Func<T, bool>>? predicate = null,
-        CancellationToken cancellationToken = default)
+    public async Task<(List<T> Data, int TotalRecord)> GetAllAsync(int pageNumber, int pageSize, 
+        Expression<Func<T, bool>>? predicate = null, bool asNoTracking = false,
+        CancellationToken cancellationToken = default, params Expression<Func<T, object>>[]? includes)
     {
         IQueryable<T> query = _dbSet;
+        
+        if (asNoTracking)
+            query = query.AsNoTracking();
+        
         if (predicate != null)
             query = query.Where(predicate);
         
-        return await query.ToListAsync(cancellationToken: cancellationToken);
+        if(includes != null)
+            foreach(var include in includes)
+                query = query.Include(include);
+        
+        int totalRecords = await query.CountAsync(cancellationToken);
+        
+        var data = await query
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync(cancellationToken);
+        
+        return (data, totalRecords);
     }
 
     public async Task<T> CreateAsync(T entity, CancellationToken cancellationToken = default)

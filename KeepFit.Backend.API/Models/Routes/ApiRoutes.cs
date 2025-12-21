@@ -11,6 +11,8 @@ public class ApiRoutes
         public const string CreateExercises = baseUrl + "exercises";
         public const string GetProgramsFromExercise = baseUrl + "exercises/{id:guid}/programs";
         public const string GetProgramsWitoutNotExercises = baseUrl + "exercises/{id:guid}/without-programs";
+        public const string AddExerciseToProgram = baseUrl + "exercises/{exerciseId:guid}/programs/{programId:guid}";
+        
     }
 
     public class Programs
@@ -19,7 +21,6 @@ public class ApiRoutes
         public const string GetProgram = baseUrl + "programs/{id:guid}";
         public const string DeleteProgram = baseUrl + "programs/{id:guid}";
         public const string CreateProgram = baseUrl + "programs";
-        public const string AddExerciseToProgram = baseUrl + "programs/{programId:guid}/exercises/{exerciseId:guid}";
         public const string GetExercisesFromProgram = baseUrl + "programs/{programId:guid}/exercises";
     }
 }

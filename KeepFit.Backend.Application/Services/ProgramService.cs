@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using KeepFit.Backend.Application.Contracts;
 using KeepFit.Backend.Application.DTOs.Programs;
+using KeepFit.Backend.Application.DTOs.Requests;
 using KeepFit.Backend.Application.DTOs.Responses;
 using KeepFit.Backend.Domain.Exceptions;
 using KeepFit.Backend.Domain.Models.Exercise;
@@ -13,30 +14,39 @@ namespace KeepFit.Backend.Application.Services;
 public class ProgramService(
     IGenericService<FitnessProgram> genericService,
     AppDbContext context,
-    IGenericService<Exercise> genericServiceExercise,
     IMapper mapper
 ) : IProgramService
 {
     
-    public async Task<List<ProgramResponse>> GetAllAsync(CancellationToken cancellationToken = default)
+    public async Task<List<ProgramResponse>> GetAllAsync(
+        PaginationFilter filter,
+        CancellationToken cancellationToken = default)
     {
         var programs = await genericService.GetAllAsync(
+            pageNumber : filter.PageNumber,
+            pageSize : filter.PageSize,
             predicate: null,
+            asNoTracking: false,
             cancellationToken
             );
-        if (programs.Count == 0) throw new NotFoundException("Aucun programme trouvé");
+        if (programs.TotalRecord == 0) throw new NotFoundException("Aucun programme trouvé");
         return mapper.Map<List<ProgramResponse>>(programs);
     }
 
-    public async Task<ProgramResponse?> GetAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task<ProgramResponse?> GetAsync(
+        PaginationFilter filter,
+        Guid id, CancellationToken cancellationToken = default)
     {
         var program = await genericService.GetAllAsync(
+            pageNumber: filter.PageNumber,
+            pageSize: filter.PageSize,
             predicate: pro => pro.Id == id,
+            asNoTracking: false,
             cancellationToken);
         
-        if (program == null) throw new NotFoundException("Aucun programme trouvé");
-        
-        var result = program.First();
+        if (program.TotalRecord == 0) throw new NotFoundException("Aucun programme trouvé");
+
+        var result = program.Data.First();
         
         return mapper.Map<ProgramResponse>(result);
     }
@@ -56,32 +66,6 @@ public class ProgramService(
         var result = await genericService.DeleteAsync(id, cancellationToken);
         if (!result) throw new NotFoundException("Aucun programme trouvé");
         return result;
-    }
-
-    public async Task<bool> AddExerciseToProgramAsync(
-        Guid programId, Guid exerciseId, CancellationToken cancellationToken = default)
-    {
-        var program = await genericService.GetAllAsync(
-            predicate: prog => prog.Id == programId,
-            cancellationToken);
-        
-        var exercise = await genericServiceExercise.GetAllAsync(
-            predicate: ex => ex.Id == exerciseId,
-            cancellationToken);
-        
-        if(program == null || exercise == null)
-            throw new NotFoundException("Aucun élément trouvé.");
-
-        var programExercise = new ProgramExercise
-        {
-            ProgramId = programId,
-            ExerciseId = exerciseId,
-        };
-        
-        await context.ProgramExercise.AddAsync(programExercise, cancellationToken);
-        await context.SaveChangesAsync(cancellationToken);
-
-        return true;
     }
 
     public async Task<List<ExerciseResponse>> GetAllExercisesFromProgramAsync(
