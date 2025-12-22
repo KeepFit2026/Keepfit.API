@@ -1,3 +1,5 @@
+using System.Reflection;
+using KeepFit.Backend.API.Filter;
 using KeepFit.Backend.Application.Contracts;
 using KeepFit.Backend.Application.Mapping;
 using KeepFit.Backend.Application.Services;
@@ -15,7 +17,18 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 // Swagger
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.OperationFilter<GenericControllerOperationFilter>();
+    
+    var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+    
+    if (File.Exists(xmlPath))
+    {
+        c.IncludeXmlComments(xmlPath);
+    }
+});
 
 // Controllers
 builder.Services.AddControllers();

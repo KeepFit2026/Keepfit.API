@@ -26,7 +26,6 @@ public abstract class BaseGenericController<TService, TResponse, TDto>(TService 
         {
             return NotFound(new PageApiResponse<List<TResponse>?>(null, 0, 0, 0));
         }
-
     }
 
     [HttpGet("{id}")]
