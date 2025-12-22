@@ -65,7 +65,7 @@ public class ProgramService(
         );
     }
 
-    public async Task<ProgramResponse> CreateProgramAsync(ProgramDto dto, CancellationToken cancellationToken = default)
+    public async Task<ProgramResponse> CreateAsync(ProgramDto dto, CancellationToken cancellationToken = default)
     {
         var entity = await genericService.CreateAsync(
             mapper.Map<FitnessProgram>(dto),
@@ -75,7 +75,7 @@ public class ProgramService(
         return mapper.Map<ProgramResponse>(entity);
     }
 
-    public async Task<bool> DeleteProgramAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task<bool> DeleteAsync(Guid id, CancellationToken cancellationToken = default)
     {
         var result = await genericService.DeleteAsync(id, cancellationToken);
         if (!result) throw new NotFoundException("Aucun programme trouvé");

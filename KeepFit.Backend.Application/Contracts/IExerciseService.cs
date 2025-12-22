@@ -5,7 +5,7 @@ using KeepFit.Backend.Domain.Models.Program;
 
 namespace KeepFit.Backend.Application.Contracts;
 
-public interface IExerciseService
+public interface IExerciseService : IContract<ExerciseResponse, ExerciseDto>
 {
     /// <summary>
     /// Récupère tous les exercices
@@ -31,7 +31,7 @@ public interface IExerciseService
     /// <param name="dto">un exercice</param>
     /// <param name="cancellationToken">CancellationToken</param>
     /// <returns></returns>
-    Task<ExerciseResponse> CreateExerciseAsync(ExerciseDto dto, CancellationToken cancellationToken = default);
+    Task<ExerciseResponse> CreateAsync(ExerciseDto dto, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Suprimme un exercice
@@ -39,7 +39,7 @@ public interface IExerciseService
     /// <param name="id">Id de l'exercice</param>
     /// <param name="cancellationToken">CancellationToken</param>
     /// <returns></returns>
-    Task<bool> DeleteExerciseAsync(Guid id, CancellationToken cancellationToken = default);
+    Task<bool> DeleteAsync(Guid id, CancellationToken cancellationToken = default);
     
     /// <summary>
     /// Récupère tous les programmes associés à cette exercice.
