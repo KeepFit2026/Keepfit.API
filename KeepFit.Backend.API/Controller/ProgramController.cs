@@ -9,6 +9,7 @@ using KeepFit.Backend.Application.DTOs.Requests;
 namespace KeepFit.Backend.API.Controller
 {
 
+    //TODO Refaire les méthodes pour les programmes. 
     [ApiController]
     [Route("api/[controller]")]
     public class ProgramController(IProgramService service) : ControllerBase
@@ -25,8 +26,7 @@ namespace KeepFit.Backend.API.Controller
             try
             {
                 var result = await service.GetAllAsync(filter, cancellationToken);
-                return Ok(new ApiResponse<List<ProgramResponse>>
-                   (true, result, "Listes des programmes."));
+                return Ok(result);
             }
             catch (NotFoundException message)
             {
@@ -42,7 +42,7 @@ namespace KeepFit.Backend.API.Controller
         /// <returns></returns>
         [HttpGet(ApiRoutes.Programs.GetProgram)]
         public async Task<IActionResult> GetAsync(
-            PaginationFilter filter,
+            [FromQuery] PaginationFilter filter,
             [FromRoute] Guid id,
             CancellationToken cancellationToken = default
           )
@@ -50,8 +50,7 @@ namespace KeepFit.Backend.API.Controller
             try
             {
                 var result = await service.GetAsync(filter, id, cancellationToken);
-                return Ok(new ApiResponse<ProgramResponse?>(
-                   true, result, "Programme Recupere"));
+                return Ok(result);
             }
             catch (NotFoundException message)
             {

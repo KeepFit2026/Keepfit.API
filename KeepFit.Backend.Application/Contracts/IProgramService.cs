@@ -11,8 +11,9 @@ namespace KeepFit.Backend.Application.Contracts
 {
     public interface IProgramService
     {
-        Task<List<ProgramResponse>> GetAllAsync(PaginationFilter filter,CancellationToken cancellationToken = default);
-        Task<ProgramResponse?> GetAsync(PaginationFilter filter, Guid id, CancellationToken cancellationToken = default);
+        Task<PageApiResponse<List<ProgramResponse>>> GetAllAsync(PaginationFilter filter,CancellationToken cancellationToken = default);
+        Task<PageApiResponse<ProgramResponse?>> GetAsync(PaginationFilter filter, Guid id,
+            CancellationToken cancellationToken = default);
         Task<ProgramResponse> CreateProgramAsync(ProgramDto dto, CancellationToken cancellationToken = default);
         Task<bool> DeleteProgramAsync(Guid id, CancellationToken cancellationToken = default);
         

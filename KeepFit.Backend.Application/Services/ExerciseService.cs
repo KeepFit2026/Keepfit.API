@@ -8,7 +8,6 @@ using KeepFit.Backend.Domain.Exceptions;
 using KeepFit.Backend.Domain.Models.Exercise;
 using KeepFit.Backend.Domain.Models.Program;
 using KeepFit.Backend.Infrastructure;
-using Microsoft.VisualStudio.TestPlatform.TestHost;
 
 namespace KeepFit.Backend.Application.Services;
 
@@ -27,8 +26,7 @@ public class ExerciseService(
             pageNumber: filter.PageNumber,
             pageSize: filter.PageSize,
             predicate: null,
-            asNoTracking: false,
-            cancellationToken);
+            cancellationToken: cancellationToken);
         
         if(exercises.TotalRecord == 0) 
             throw new NotFoundException("Aucun exercice trouve");
@@ -104,8 +102,7 @@ public class ExerciseService(
             pageNumber: safeFilter.PageNumber,
             pageSize: safeFilter.PageSize,
             predicate: p => p.ProgramExercises.Any(pe => pe.ExerciseId == exerciseId),
-            asNoTracking: false,
-            cancellationToken
+            cancellationToken: cancellationToken
         );
         
         var response =  mapper.Map<List<ProgramResponse>>(result.Data);
@@ -127,8 +124,7 @@ public class ExerciseService(
             pageNumber: filter.PageNumber,
             pageSize: filter.PageSize,
             predicate: p => p.ProgramExercises.All(pe => pe.ExerciseId != exerciseId),
-            asNoTracking: false,
-            cancellationToken
+            cancellationToken: cancellationToken
         );
         
         var responseData = mapper.Map<List<ProgramResponse>>(result.Data);
@@ -140,29 +136,25 @@ public class ExerciseService(
             result.TotalRecord);
     }
     
-    //TODO Refaire cette méthode, elle ne fonctionne plus avec l'ajout de la paginagtion.
     public async Task<bool> AddExerciseToProgramAsync(
         PaginationFilter filter,
         Guid programId, Guid exerciseId, CancellationToken cancellationToken = default)
     {
-        var program = await genericService.GetAllAsync(
+        var program = await genericProgramService.GetAllAsync(
             pageNumber: filter.PageNumber,
             pageSize: filter.PageSize,
             predicate: prog => prog.Id == programId,
-            asNoTracking: false,
-            cancellationToken);
+            cancellationToken: cancellationToken
+            );
         
         var exercise = await genericService.GetAllAsync(
             pageNumber: filter.PageNumber,
             pageSize: filter.PageSize,
             predicate: ex => ex.Id == exerciseId,
-            asNoTracking: false,
-            cancellationToken);
+            cancellationToken: cancellationToken
+            );
         
-        if(program.TotalRecord == 0)
-            throw new NotFoundException("Aucun élément trouvé.");
-        
-        if(exercise.TotalRecord == 0)
+        if(program.TotalRecord == 0 || exercise.TotalRecord == 0)
             throw new NotFoundException("Aucun élément trouvé.");
 
         var programExercise = new ProgramExercise

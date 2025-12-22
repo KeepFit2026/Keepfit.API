@@ -30,11 +30,5 @@ public class AppDbContext : DbContext
             .WithMany(p => p.ProgramExercises)     
             .HasForeignKey(pe => pe.ProgramId)
             .OnDelete(DeleteBehavior.Cascade);  
-
-        modelBuilder.Entity<ProgramExercise>()
-            .HasOne(pe => pe.Exercise)             
-            .WithMany(e => e.ProgramExercises)  
-            .HasForeignKey(pe => pe.ExerciseId)
-            .OnDelete(DeleteBehavior.Cascade);
     }
 }

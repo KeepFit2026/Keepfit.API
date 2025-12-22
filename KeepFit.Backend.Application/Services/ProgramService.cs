@@ -18,37 +18,51 @@ public class ProgramService(
 ) : IProgramService
 {
     
-    public async Task<List<ProgramResponse>> GetAllAsync(
+    public async Task<PageApiResponse<List<ProgramResponse>>>GetAllAsync(
         PaginationFilter filter,
         CancellationToken cancellationToken = default)
     {
-        var programs = await genericService.GetAllAsync(
+        var result = await genericService.GetAllAsync(
             pageNumber : filter.PageNumber,
             pageSize : filter.PageSize,
             predicate: null,
             asNoTracking: false,
             cancellationToken
             );
-        if (programs.TotalRecord == 0) throw new NotFoundException("Aucun programme trouvé");
-        return mapper.Map<List<ProgramResponse>>(programs);
+        if (result.TotalRecord == 0) 
+            throw new NotFoundException("Aucun programme trouvé");
+        
+        var response =  mapper.Map<List<ProgramResponse>>(result.Data);
+        
+        return new PageApiResponse<List<ProgramResponse>>(
+            response,
+            filter.PageNumber,
+            filter.PageSize,
+            result.TotalRecord
+            );
     }
 
-    public async Task<ProgramResponse?> GetAsync(
-        PaginationFilter filter,
+    public async Task<PageApiResponse<ProgramResponse?>> GetAsync(PaginationFilter filter,
         Guid id, CancellationToken cancellationToken = default)
     {
-        var program = await genericService.GetAllAsync(
+        var result = await genericService.GetAllAsync(
             pageNumber: filter.PageNumber,
             pageSize: filter.PageSize,
             predicate: pro => pro.Id == id,
             asNoTracking: false,
             cancellationToken);
         
-        if (program.TotalRecord == 0) throw new NotFoundException("Aucun programme trouvé");
-
-        var result = program.Data.First();
+        if (result.TotalRecord == 0) 
+            throw new NotFoundException("Aucun programme trouvé");
         
-        return mapper.Map<ProgramResponse>(result);
+        var response = mapper.Map<ProgramResponse>(result.Data.First());
+
+        return new PageApiResponse<ProgramResponse?>(
+            response,
+            filter.PageNumber,
+            filter.PageSize,
+            result.TotalRecord
+        );
     }
 
     public async Task<ProgramResponse> CreateProgramAsync(ProgramDto dto, CancellationToken cancellationToken = default)

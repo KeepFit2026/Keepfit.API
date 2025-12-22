@@ -13,16 +13,16 @@ namespace KeepFit.Backend.API.Controller;
 public class ExerciseController(IExerciseService service) : ControllerBase
 {
     /// <summary>
-    /// Récupère tous les exercices.
+    /// Récupère la liste paginée de tous les exercices.
     /// </summary>
+    /// <param name="filter">Filtres de pagination.</param>
     /// <param name="cancellationToken">Token d’annulation.</param>
-    /// <returns>
-    /// - 200 OK avec la liste des exercices
-    /// - 404 NotFound si aucun exercice.
-    /// </returns>
+    /// <returns>Une liste paginée d'exercices.</returns>
+    /// <response code="200">Retourne la liste des exercices.</response>
+    /// <response code="404">Si aucun exercice n'est trouvé.</response>
     [HttpGet(ApiRoutes.Exercises.GetAllExercises)]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(PageApiResponse<List<ExerciseResponse>>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(PageApiResponse<List<ExerciseResponse>>), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetAllAsync(
         [FromQuery] PaginationFilter filter,
         CancellationToken cancellationToken = default
@@ -33,24 +33,24 @@ public class ExerciseController(IExerciseService service) : ControllerBase
             var response = await service.GetAllAsync(filter, cancellationToken);
             return Ok(response);
         }
-        catch (NotFoundException message)
+        catch (NotFoundException)
         {
             return NotFound(new PageApiResponse<List<ExerciseResponse>?>(null, 0, 0, 0));
         }
     }
 
     /// <summary>
-    /// Récupère un exercice par son identifiant.
+    /// Récupère un exercice spécifique par son identifiant.
     /// </summary>
-    /// <param name="id">Identifiant de l'exercice.</param>
+    /// <param name="filter">Filtres de pagination (si applicable au contexte).</param>
+    /// <param name="id">Identifiant unique de l'exercice.</param>
     /// <param name="cancellationToken">Token d’annulation.</param>
-    /// <returns>
-    /// - 200 OK avec l'exercice
-    /// - 404 NotFound si non trouvé.
-    /// </returns>
+    /// <returns>Les détails de l'exercice demandé.</returns>
+    /// <response code="200">Retourne l'exercice demandé.</response>
+    /// <response code="404">Si l'exercice avec l'ID spécifié n'existe pas.</response>
     [HttpGet(ApiRoutes.Exercises.GetExercises)]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(PageApiResponse<ExerciseResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(PageApiResponse<ExerciseResponse>), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetAsync(
         [FromQuery] PaginationFilter filter,
         [FromRoute] Guid id, 
@@ -61,7 +61,7 @@ public class ExerciseController(IExerciseService service) : ControllerBase
             var response = await service.GetAsync(filter, id, cancellationToken);
             return Ok(response);
         }
-        catch (NotFoundException message)
+        catch (NotFoundException)
         {
             return NotFound(new PageApiResponse<ExerciseResponse?>(null, 0, 0, 0));
         }
@@ -70,11 +70,14 @@ public class ExerciseController(IExerciseService service) : ControllerBase
     /// <summary>
     /// Créer un nouvel exercice.
     /// </summary>
-    /// <param name="dto">Données de l'exercice à créer.</param>
+    /// <param name="dto">Objet contenant les informations de l'exercice à créer.</param>
     /// <param name="cancellationToken">Token d’annulation.</param>
-    /// <returns>
-    /// </returns>
+    /// <returns>La confirmation de la création de l'exercice.</returns>
+    /// <response code="200">L'exercice a été créé avec succès.</response>
+    /// <response code="400">Si les données fournies sont invalides.</response>
     [HttpPost(ApiRoutes.Exercises.CreateExercises)]
+    [ProducesResponseType(typeof(ApiResponse<ExerciseResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> CreateAsync(
         [FromBody] ExerciseDto dto, 
         CancellationToken cancellationToken = default)
@@ -84,17 +87,16 @@ public class ExerciseController(IExerciseService service) : ControllerBase
     }
 
     /// <summary>
-    /// Supprime un exercice par son identifiant.
+    /// Supprime un exercice existant par son identifiant.
     /// </summary>
-    /// <param name="id">Identifiant de l'exercice.</param>
+    /// <param name="id">Identifiant de l'exercice à supprimer.</param>
     /// <param name="cancellationToken">Token d’annulation.</param>
-    /// <returns>
-    /// - 204 No Content si suppression réussie
-    /// - 404 NotFound si l'exercice n’existe pas.
-    /// </returns>
+    /// <returns>Aucun contenu si succès, ou un message d'erreur.</returns>
+    /// <response code="204">L'exercice a été supprimé avec succès.</response>
+    /// <response code="404">Si l'exercice n’existe pas.</response>
     [HttpDelete(ApiRoutes.Exercises.DeleteExercises)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> DeleteAsync(
         [FromRoute] Guid id, 
         CancellationToken cancellationToken = default)
@@ -111,12 +113,17 @@ public class ExerciseController(IExerciseService service) : ControllerBase
     }
 
     /// <summary>
-    /// Affiche les programmes associés à un seul exercice.
+    /// Récupère la liste des programmes associés à un exercice spécifique.
     /// </summary>
-    /// <param name="id">Id de l'exercice.</param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
+    /// <param name="filter">Filtres de pagination.</param>
+    /// <param name="id">Identifiant de l'exercice.</param>
+    /// <param name="cancellationToken">Token d’annulation.</param>
+    /// <returns>Une liste de programmes.</returns>
+    /// <response code="200">Retourne la liste des programmes contenant cet exercice.</response>
+    /// <response code="404">Si l'exercice ou aucun programme n'est trouvé.</response>
     [HttpGet(ApiRoutes.Exercises.GetProgramsFromExercise)]
+    [ProducesResponseType(typeof(PageApiResponse<List<ProgramResponse>>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResponse<List<ProgramResponse>>), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetProgramsFromExercise(
         [FromQuery] PaginationFilter filter,
         [FromRoute] Guid id,
@@ -134,11 +141,17 @@ public class ExerciseController(IExerciseService service) : ControllerBase
     }
 
     /// <summary>
-    /// Affiche tous les programmes qui n'appartiennent pas à un exercice.
+    /// Récupère tous les programmes qui ne contiennent PAS l'exercice spécifié.
     /// </summary>
-    /// <param name="id">Id d'un exercice.</param>
-    /// <returns></returns>
+    /// <param name="filter">Filtres de pagination.</param>
+    /// <param name="id">Identifiant de l'exercice à exclure.</param>
+    /// <param name="cancellationToken">Token d’annulation.</param>
+    /// <returns>Une liste de programmes disponibles pour ajout.</returns>
+    /// <response code="200">Retourne la liste des programmes ne contenant pas l'exercice.</response>
+    /// <response code="404">Si l'exercice n'est pas trouvé.</response>
     [HttpGet(ApiRoutes.Exercises.GetProgramsWitoutNotExercises)]
+    [ProducesResponseType(typeof(PageApiResponse<List<ProgramResponse>>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResponse<List<ProgramResponse>>), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetProgramsWitoutNotExercises(
         [FromQuery] PaginationFilter filter,
         [FromRoute] Guid id,
@@ -156,13 +169,18 @@ public class ExerciseController(IExerciseService service) : ControllerBase
     }
     
     /// <summary>
-    /// Ajoute un exerice à un programme.
+    /// Ajoute un exercice existant à un programme spécifique.
     /// </summary>
-    /// <param name="programId">Id du programme</param>
-    /// <param name="exerciseId">Id de l'exercice</param>
-    /// <param name="cancellationToken">Cancellation Token</param>
-    /// <returns></returns>
+    /// <param name="filter">Filtres de pagination (si applicable).</param>
+    /// <param name="programId">Identifiant du programme cible.</param>
+    /// <param name="exerciseId">Identifiant de l'exercice à ajouter.</param>
+    /// <param name="cancellationToken">Token d’annulation.</param>
+    /// <returns>Une confirmation de l'ajout.</returns>
+    /// <response code="200">L'exercice a été ajouté au programme avec succès.</response>
+    /// <response code="404">Si le programme ou l'exercice n'existe pas.</response>
     [HttpGet(ApiRoutes.Exercises.AddExerciseToProgram)]
+    [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResponse<ProgramExerciseResponse>), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> AddExerciseToProgramAsync(
         [FromQuery] PaginationFilter filter,
         [FromRoute] Guid exerciseId,
