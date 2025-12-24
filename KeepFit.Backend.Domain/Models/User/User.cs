@@ -5,7 +5,7 @@ public class User
     /// <summary>
     /// Id de l'utilisateur
     /// </summary>
-    public int Id { get; set; }
+    public Guid Id { get; set; }
     
     /// <summary>
     /// Nom de l'utilisateur

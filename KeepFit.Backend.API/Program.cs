@@ -5,6 +5,7 @@ using KeepFit.Backend.Application.Mapping;
 using KeepFit.Backend.Application.Services;
 using KeepFit.Backend.Domain.Models.Program;
 using KeepFit.Backend.Domain.Models.Exercise;
+using KeepFit.Backend.Domain.Models.User;
 using KeepFit.Backend.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 
@@ -42,10 +43,19 @@ builder.Services.AddScoped<IGenericService<Exercise>, GenericService<Exercise>>(
 
 builder.Services.AddScoped<IProgramService, ProgramService>();
 builder.Services.AddScoped<IGenericService<FitnessProgram>, GenericService<FitnessProgram>>();
+
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IGenericService<User>, GenericService<User>>();
+
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+//Service qui check si l'API est OK (health).
+builder.Services.AddHealthChecks();
 
 // Build the app
 var app = builder.Build();
+
+app.MapHealthChecks("/api/v1/health-check");
 
 // Swagger UI
 if (app.Environment.IsDevelopment())
