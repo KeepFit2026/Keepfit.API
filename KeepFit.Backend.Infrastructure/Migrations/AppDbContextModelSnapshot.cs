@@ -22,6 +22,36 @@ namespace KeepFit.Backend.Infrastructure.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("KeepFit.Backend.Domain.Models.Classroom", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Classroom");
+                });
+
+            modelBuilder.Entity("KeepFit.Backend.Domain.Models.ClassroomUser", b =>
+                {
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ClassroomId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("UserId", "ClassroomId");
+
+                    b.HasIndex("ClassroomId");
+
+                    b.ToTable("ClassroomUsers", (string)null);
+                });
+
             modelBuilder.Entity("KeepFit.Backend.Domain.Models.Exercise.Exercise", b =>
                 {
                     b.Property<Guid>("Id")
@@ -110,6 +140,25 @@ namespace KeepFit.Backend.Infrastructure.Migrations
                     b.ToTable("User");
                 });
 
+            modelBuilder.Entity("KeepFit.Backend.Domain.Models.ClassroomUser", b =>
+                {
+                    b.HasOne("KeepFit.Backend.Domain.Models.Classroom", "Classroom")
+                        .WithMany("ClassroomUsers")
+                        .HasForeignKey("ClassroomId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("KeepFit.Backend.Domain.Models.User.User", "User")
+                        .WithMany("ClassroomUsers")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Classroom");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("KeepFit.Backend.Domain.Models.Program.ProgramExercise", b =>
                 {
                     b.HasOne("KeepFit.Backend.Domain.Models.Exercise.Exercise", "Exercise")
@@ -129,6 +178,11 @@ namespace KeepFit.Backend.Infrastructure.Migrations
                     b.Navigation("Program");
                 });
 
+            modelBuilder.Entity("KeepFit.Backend.Domain.Models.Classroom", b =>
+                {
+                    b.Navigation("ClassroomUsers");
+                });
+
             modelBuilder.Entity("KeepFit.Backend.Domain.Models.Exercise.Exercise", b =>
                 {
                     b.Navigation("ProgramExercises");
@@ -137,6 +191,11 @@ namespace KeepFit.Backend.Infrastructure.Migrations
             modelBuilder.Entity("KeepFit.Backend.Domain.Models.Program.FitnessProgram", b =>
                 {
                     b.Navigation("ProgramExercises");
+                });
+
+            modelBuilder.Entity("KeepFit.Backend.Domain.Models.User.User", b =>
+                {
+                    b.Navigation("ClassroomUsers");
                 });
 #pragma warning restore 612, 618
         }

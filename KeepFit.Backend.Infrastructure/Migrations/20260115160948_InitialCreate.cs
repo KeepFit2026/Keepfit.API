@@ -6,11 +6,23 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace KeepFit.Backend.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class initial : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "Classroom",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Classroom", x => x.Id);
+                });
+
             migrationBuilder.CreateTable(
                 name: "Exercise",
                 columns: table => new
@@ -87,6 +99,35 @@ namespace KeepFit.Backend.Infrastructure.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "ClassroomUsers",
+                columns: table => new
+                {
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ClassroomId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ClassroomUsers", x => new { x.UserId, x.ClassroomId });
+                    table.ForeignKey(
+                        name: "FK_ClassroomUsers_Classroom_ClassroomId",
+                        column: x => x.ClassroomId,
+                        principalTable: "Classroom",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ClassroomUsers_User_UserId",
+                        column: x => x.UserId,
+                        principalTable: "User",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ClassroomUsers_ClassroomId",
+                table: "ClassroomUsers",
+                column: "ClassroomId");
+
             migrationBuilder.CreateIndex(
                 name: "IX_ProgramExercises_ExerciseId",
                 table: "ProgramExercises",
@@ -97,10 +138,16 @@ namespace KeepFit.Backend.Infrastructure.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "ClassroomUsers");
+
+            migrationBuilder.DropTable(
                 name: "ProgramExercises");
 
             migrationBuilder.DropTable(
                 name: "Role");
+
+            migrationBuilder.DropTable(
+                name: "Classroom");
 
             migrationBuilder.DropTable(
                 name: "User");

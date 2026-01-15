@@ -1,5 +1,3 @@
-using KeepFit.Backend.Domain.Models.User;
-
 namespace KeepFit.Backend.Application.DTOs.Responses;
 
 public class UserResponse
@@ -13,9 +11,4 @@ public class UserResponse
     /// Nom de l'utilisateur
     /// </summary>
     public string Name { get; set; }
-
-    /// <summary>
-    /// Role de l'utilisateur
-    /// </summary>
-    public String RoleName { get; set; }
 }

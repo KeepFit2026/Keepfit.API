@@ -1,21 +1,18 @@
-namespace KeepFit.Backend.Domain.Models.User;
+using KeepFit.Backend.Domain.Models.Program;
 
-public class User
+namespace KeepFit.Backend.Domain.Models;
+
+public class Classroom
 {
     /// <summary>
-    /// Id de l'utilisateur
+    /// Id de la classe
     /// </summary>
     public Guid Id { get; set; }
     
     /// <summary>
-    /// Nom de l'utilisateur
+    /// nom de la classe
     /// </summary>
     public string Name { get; set; }
-    
-    /// <summary>
-    /// Id du token t'authentification
-    /// </summary>
-    public int AccountId { get; set; }
     
     public ICollection<ClassroomUser> ClassroomUsers { get; set; } = new List<ClassroomUser>();
 }
