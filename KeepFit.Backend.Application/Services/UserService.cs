@@ -22,7 +22,6 @@ public class UserService(
         var exercises = await genericService.GetAllAsync(
             pageNumber: filter.PageNumber,
             pageSize: filter.PageSize,
-            includes: u => u.Role,
             cancellationToken: cancellationToken);
         
         if(exercises.TotalRecord == 0) 
@@ -47,7 +46,6 @@ public class UserService(
             pageNumber: filter.PageNumber,
             pageSize: filter.PageSize,
             predicate: ex => ex.Id == id,
-            includes: u => u.Role,
             cancellationToken: cancellationToken);
 
         if (exercises.TotalRecord == 0) throw new NotFoundException("Aucun exercice trouve");

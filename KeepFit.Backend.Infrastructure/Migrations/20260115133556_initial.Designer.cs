@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace KeepFit.Backend.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251222125234_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20260115133556_initial")]
+    partial class initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -108,12 +108,7 @@ namespace KeepFit.Backend.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("RoleId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("RoleId");
 
                     b.ToTable("User");
                 });
@@ -137,17 +132,6 @@ namespace KeepFit.Backend.Infrastructure.Migrations
                     b.Navigation("Program");
                 });
 
-            modelBuilder.Entity("KeepFit.Backend.Domain.Models.User.User", b =>
-                {
-                    b.HasOne("KeepFit.Backend.Domain.Models.User.Role", "Role")
-                        .WithMany("Users")
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Role");
-                });
-
             modelBuilder.Entity("KeepFit.Backend.Domain.Models.Exercise.Exercise", b =>
                 {
                     b.Navigation("ProgramExercises");
@@ -156,11 +140,6 @@ namespace KeepFit.Backend.Infrastructure.Migrations
             modelBuilder.Entity("KeepFit.Backend.Domain.Models.Program.FitnessProgram", b =>
                 {
                     b.Navigation("ProgramExercises");
-                });
-
-            modelBuilder.Entity("KeepFit.Backend.Domain.Models.User.Role", b =>
-                {
-                    b.Navigation("Users");
                 });
 #pragma warning restore 612, 618
         }

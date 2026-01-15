@@ -16,14 +16,4 @@ public class User
     /// Id du token t'authentification
     /// </summary>
     public int AccountId { get; set; }
-
-    /// <summary>
-    /// Id du role de l'utilisateur
-    /// </summary>
-    public int RoleId { get; set; }
-    
-    /// <summary>
-    /// Binavigabilité vers Role.
-    /// </summary>
-    public Role Role { get; set; }
 }
