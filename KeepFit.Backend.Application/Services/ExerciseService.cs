@@ -72,7 +72,7 @@ public class ExerciseService(
         );
     }
 
-    public async Task<ExerciseResponse> CreateExerciseAsync(
+    public async Task<ExerciseResponse> CreateAsync(
         ExerciseDto dto,
         CancellationToken cancellationToken = default)
     {
@@ -82,7 +82,7 @@ public class ExerciseService(
         return mapper.Map<ExerciseResponse>(entity);
     }
 
-    public async Task<bool> DeleteExerciseAsync(
+    public async Task<bool> DeleteAsync(
         Guid id, 
         CancellationToken cancellationToken = default)
     {

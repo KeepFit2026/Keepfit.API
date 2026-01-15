@@ -75,6 +75,41 @@ namespace KeepFit.Backend.Infrastructure.Migrations
                     b.ToTable("ProgramExercises", (string)null);
                 });
 
+            modelBuilder.Entity("KeepFit.Backend.Domain.Models.User.Role", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Role");
+                });
+
+            modelBuilder.Entity("KeepFit.Backend.Domain.Models.User.User", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("AccountId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("User");
+                });
+
             modelBuilder.Entity("KeepFit.Backend.Domain.Models.Program.ProgramExercise", b =>
                 {
                     b.HasOne("KeepFit.Backend.Domain.Models.Exercise.Exercise", "Exercise")

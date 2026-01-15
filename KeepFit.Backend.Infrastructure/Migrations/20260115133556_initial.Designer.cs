@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace KeepFit.Backend.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251029205124_AddUserAndRole")]
-    partial class AddUserAndRole
+    [Migration("20260115133556_initial")]
+    partial class initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -44,6 +44,40 @@ namespace KeepFit.Backend.Infrastructure.Migrations
                     b.ToTable("Exercise");
                 });
 
+            modelBuilder.Entity("KeepFit.Backend.Domain.Models.Program.FitnessProgram", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("FitnessProgram");
+                });
+
+            modelBuilder.Entity("KeepFit.Backend.Domain.Models.Program.ProgramExercise", b =>
+                {
+                    b.Property<Guid>("ProgramId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ExerciseId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("ProgramId", "ExerciseId");
+
+                    b.HasIndex("ExerciseId");
+
+                    b.ToTable("ProgramExercises", (string)null);
+                });
+
             modelBuilder.Entity("KeepFit.Backend.Domain.Models.User.Role", b =>
                 {
                     b.Property<int>("Id")
@@ -63,43 +97,49 @@ namespace KeepFit.Backend.Infrastructure.Migrations
 
             modelBuilder.Entity("KeepFit.Backend.Domain.Models.User.User", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("uniqueidentifier");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("AccoutId")
+                    b.Property<int>("AccountId")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("RoleId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("RoleId");
 
                     b.ToTable("User");
                 });
 
-            modelBuilder.Entity("KeepFit.Backend.Domain.Models.User.User", b =>
+            modelBuilder.Entity("KeepFit.Backend.Domain.Models.Program.ProgramExercise", b =>
                 {
-                    b.HasOne("KeepFit.Backend.Domain.Models.User.Role", "Role")
-                        .WithMany("Users")
-                        .HasForeignKey("RoleId")
+                    b.HasOne("KeepFit.Backend.Domain.Models.Exercise.Exercise", "Exercise")
+                        .WithMany("ProgramExercises")
+                        .HasForeignKey("ExerciseId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Role");
+                    b.HasOne("KeepFit.Backend.Domain.Models.Program.FitnessProgram", "Program")
+                        .WithMany("ProgramExercises")
+                        .HasForeignKey("ProgramId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Exercise");
+
+                    b.Navigation("Program");
                 });
 
-            modelBuilder.Entity("KeepFit.Backend.Domain.Models.User.Role", b =>
+            modelBuilder.Entity("KeepFit.Backend.Domain.Models.Exercise.Exercise", b =>
                 {
-                    b.Navigation("Users");
+                    b.Navigation("ProgramExercises");
+                });
+
+            modelBuilder.Entity("KeepFit.Backend.Domain.Models.Program.FitnessProgram", b =>
+                {
+                    b.Navigation("ProgramExercises");
                 });
 #pragma warning restore 612, 618
         }

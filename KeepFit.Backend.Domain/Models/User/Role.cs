@@ -11,17 +11,5 @@ public class Role
     /// Nom du role
     /// </summary>
     public string Name { get; set; }
-
-    /// <summary>
-    /// Liste des utilisateurs qui ont ce role.
-    /// </summary>
-    public List<User> Users { get; set; }
-
-    /// <summary>
-    /// Constructeur par défaut
-    /// </summary>
-    public Role()
-    {
-        Users = new List<User>();
-    }
+    
 }

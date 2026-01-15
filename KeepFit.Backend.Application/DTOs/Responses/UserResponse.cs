@@ -1,6 +1,8 @@
-namespace KeepFit.Backend.Domain.Models.User;
+using KeepFit.Backend.Domain.Models.User;
 
-public class User
+namespace KeepFit.Backend.Application.DTOs.Responses;
+
+public class UserResponse
 {
     /// <summary>
     /// Id de l'utilisateur
@@ -11,9 +13,9 @@ public class User
     /// Nom de l'utilisateur
     /// </summary>
     public string Name { get; set; }
-    
+
     /// <summary>
-    /// Id du token t'authentification
+    /// Role de l'utilisateur
     /// </summary>
-    public int AccountId { get; set; }
+    public String RoleName { get; set; }
 }

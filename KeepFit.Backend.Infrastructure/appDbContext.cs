@@ -1,6 +1,7 @@
 ﻿using KeepFit.Backend.Domain;
 using KeepFit.Backend.Domain.Models.Exercise;
 using KeepFit.Backend.Domain.Models.Program;
+using KeepFit.Backend.Domain.Models.User;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestPlatform.TestHost;
 
@@ -16,6 +17,8 @@ public class AppDbContext : DbContext
     public DbSet<Exercise> Exercise { get; set; }
     public DbSet<FitnessProgram> FitnessProgram { get; set; }
     public DbSet<ProgramExercise> ProgramExercise { get; set; }
+    public DbSet<User> User { get; set; }
+    public DbSet<Role> Role { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
