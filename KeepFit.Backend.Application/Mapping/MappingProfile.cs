@@ -19,8 +19,13 @@ public class MappingProfile : Profile
 
         CreateMap<FitnessProgram, ProgramResponse>();
         CreateMap<ProgramDto, FitnessProgram>();
+
         
-        CreateMap<User, UserResponse>();
+        CreateMap<User, UserResponse>()
+            //Liaison avec RoleName et RoleId
+            .ForMember(dest => dest.RoleName,
+                opt => opt.MapFrom(src => src.Role.Name));
+        
         CreateMap<UserDto, User>();
     }
 }

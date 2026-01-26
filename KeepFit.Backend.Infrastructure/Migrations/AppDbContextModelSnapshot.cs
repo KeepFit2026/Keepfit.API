@@ -135,7 +135,12 @@ namespace KeepFit.Backend.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("RoleId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("RoleId");
 
                     b.ToTable("User");
                 });
@@ -178,6 +183,17 @@ namespace KeepFit.Backend.Infrastructure.Migrations
                     b.Navigation("Program");
                 });
 
+            modelBuilder.Entity("KeepFit.Backend.Domain.Models.User.User", b =>
+                {
+                    b.HasOne("KeepFit.Backend.Domain.Models.User.Role", "Role")
+                        .WithMany("Users")
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Role");
+                });
+
             modelBuilder.Entity("KeepFit.Backend.Domain.Models.Classroom", b =>
                 {
                     b.Navigation("ClassroomUsers");
@@ -191,6 +207,11 @@ namespace KeepFit.Backend.Infrastructure.Migrations
             modelBuilder.Entity("KeepFit.Backend.Domain.Models.Program.FitnessProgram", b =>
                 {
                     b.Navigation("ProgramExercises");
+                });
+
+            modelBuilder.Entity("KeepFit.Backend.Domain.Models.User.Role", b =>
+                {
+                    b.Navigation("Users");
                 });
 
             modelBuilder.Entity("KeepFit.Backend.Domain.Models.User.User", b =>

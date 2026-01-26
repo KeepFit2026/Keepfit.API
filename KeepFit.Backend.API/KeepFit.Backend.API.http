@@ -1,6 +1,9 @@
 @KeepFit.Backend.API_HostAddress = http://localhost:5255
 
-GET {{KeepFit.Backend.API_HostAddress}}/weatherforecast/
-Accept: application/json
+@token = eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwMDAiLCJpYXQiOjE3Njk0NDExMDksImV4cCI6MTc2OTQ0NDcwOSwibmJmIjoxNzY5NDQxMTA5LCJqdGkiOiI2Wkg3QWpIS2VjQVFXdnRoIiwic3ViIjoiMyIsInBydiI6IjNkYTA0NTA3YWFkZjEzMmNlZTczMmZkZWU0ZWY2YWEzOTBkZWM1NzkiLCJBY2NvdW50SWQiOjMsImVtYWlsIjoicm9vdEBnbWFpbC5jb20iLCJyb2xlSWQiOjJ9.TkYWXjl7jFoUfw1bWGXNEkmjGSPjrpwoGZienUJMfA0
 
 ###
+
+GET http://localhost:5255/api/v1/exercises
+Authorization: Bearer {{token}}
+Accept: application/json

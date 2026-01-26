@@ -52,5 +52,13 @@ public class AppDbContext : DbContext
             .WithMany(c => c.ClassroomUsers) 
             .HasForeignKey(cu => cu.ClassroomId)
             .OnDelete(DeleteBehavior.Cascade);
+        
+        modelBuilder.Entity<User>(entity =>
+        {
+            entity.HasOne(u => u.Role)         
+                .WithMany(r => r.Users)      
+                .HasForeignKey(u => u.RoleId) 
+                .OnDelete(DeleteBehavior.Restrict);
+        });
     }
 }

@@ -12,4 +12,8 @@ public class Role
     /// </summary>
     public string Name { get; set; }
     
+    /// <summary>
+    /// Liste des utilisateurs avec un role.
+    /// </summary>
+    public List<User> Users { get; set; } = new List<User>();
 }

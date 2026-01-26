@@ -1,4 +1,5 @@
 using System.Reflection;
+using System.Text;
 using KeepFit.Backend.API.Filter;
 using KeepFit.Backend.Application.Contracts;
 using KeepFit.Backend.Application.Mapping;
@@ -7,17 +8,35 @@ using KeepFit.Backend.Domain.Models.Program;
 using KeepFit.Backend.Domain.Models.Exercise;
 using KeepFit.Backend.Domain.Models.User;
 using KeepFit.Backend.Infrastructure;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
-// DbContext
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
 );
 
-// Swagger
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = false,
+        ValidateAudience = false,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!)),
+        RoleClaimType = "roleId"
+    };
+});
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
@@ -32,13 +51,10 @@ builder.Services.AddSwaggerGen(c =>
     }
 });
 
-// Controllers
 builder.Services.AddControllers();
 
-// AutoMapper
 builder.Services.AddAutoMapper(cfg => { }, typeof(MappingProfile).Assembly);
 
-// Services
 builder.Services.AddScoped<IExerciseService, ExerciseService>();
 builder.Services.AddScoped<IGenericService<Exercise>, GenericService<Exercise>>();
 
@@ -50,15 +66,12 @@ builder.Services.AddScoped<IGenericService<User>, GenericService<User>>();
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
-//Service qui check si l'API est OK (health).
 builder.Services.AddHealthChecks();
 
-// Build the app
 var app = builder.Build();
 
 app.MapHealthChecks("/api/v1/health-check");
 
-// Swagger UI
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -69,5 +82,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseAuthentication();
+app.UseAuthorization();
+
 app.MapControllers();
 app.Run();

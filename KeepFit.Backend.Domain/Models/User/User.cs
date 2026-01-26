@@ -17,5 +17,9 @@ public class User
     /// </summary>
     public int AccountId { get; set; }
     
+    public int RoleId { get; set; }
+    
+    public Role Role { get; set; }
+    
     public ICollection<ClassroomUser> ClassroomUsers { get; set; } = new List<ClassroomUser>();
 }

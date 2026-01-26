@@ -19,21 +19,22 @@ public class UserService(
         PaginationFilter filter,
         CancellationToken cancellationToken = default)
     {
-        var exercises = await genericService.GetAllAsync(
+        var users = await genericService.GetAllAsync(
             pageNumber: filter.PageNumber,
             pageSize: filter.PageSize,
+            includes: u => u.Role,
             cancellationToken: cancellationToken);
         
-        if(exercises.TotalRecord == 0) 
+        if(users.TotalRecord == 0) 
             throw new NotFoundException("Aucun exercice trouve");
         
-        var response = mapper.Map<List<UserResponse>>(exercises.Data);
+        var response = mapper.Map<List<UserResponse>>(users.Data);
         
         return new PageApiResponse<List<UserResponse>>(
             response,
             filter.PageNumber,
             filter.PageSize,
-            exercises.TotalRecord
+            users.TotalRecord
             );
     }
 
@@ -42,15 +43,16 @@ public class UserService(
         Guid id,
         CancellationToken cancellationToken = default)
     {
-        var exercises = await genericService.GetAllAsync(
+        var user = await genericService.GetAllAsync(
             pageNumber: filter.PageNumber,
             pageSize: filter.PageSize,
             predicate: ex => ex.Id == id,
+            includes: u => u.Role,
             cancellationToken: cancellationToken);
 
-        if (exercises.TotalRecord == 0) throw new NotFoundException("Aucun exercice trouve");
+        if (user.TotalRecord == 0) throw new NotFoundException("Aucun exercice trouve");
         
-        var exercise = exercises.Data.First();
+        var exercise = user.Data.First();
         
         var response = mapper.Map<UserResponse>(exercise);
 
@@ -58,7 +60,7 @@ public class UserService(
             response,
             filter.PageNumber,
             filter.PageSize,
-            exercises.TotalRecord
+            user.TotalRecord
         );
     }
 
