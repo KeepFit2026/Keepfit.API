@@ -139,8 +139,8 @@ public class ExerciseService(
     public async Task<bool> AddExerciseToProgramAsync(
         Guid programId, Guid exerciseId, CancellationToken cancellationToken = default)
     {
-        var programExist = await genericProgramService.ExistsAsync(p => p.Id == programId, cancellationToken);
-        var exerciseExist = await genericService.ExistsAsync(ex => ex.Id == exerciseId, cancellationToken);
+        var programExist = await genericProgramService.ExistsAsync(programId, cancellationToken);
+        var exerciseExist = await genericService.ExistsAsync(exerciseId, cancellationToken);
         
         if (!programExist || !exerciseExist)
             throw new NotFoundException("Le programme ou l'exercice n'existe pas.");

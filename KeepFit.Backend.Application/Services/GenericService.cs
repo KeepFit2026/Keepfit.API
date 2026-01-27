@@ -2,6 +2,8 @@ using System.Linq.Expressions;
 using KeepFit.Backend.Application.Contracts;
 using KeepFit.Backend.Infrastructure;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging;
 
 namespace KeepFit.Backend.Application.Services;
 
@@ -9,11 +11,13 @@ public class GenericService<T> : IGenericService<T> where T : class
 {
     private readonly AppDbContext _context;
     private readonly DbSet<T> _dbSet;
+    private readonly IMemoryCache _cache;
 
-    public GenericService(AppDbContext context)
+    public GenericService(AppDbContext context, IMemoryCache cache, ILogger<GenericService<T>> logger)
     {
         _context = context;
         _dbSet = _context.Set<T>();
+        _cache = cache;
     }
 
     public async Task<(List<T> Data, int TotalRecord)> GetAllAsync(int pageNumber, int pageSize, 
@@ -56,9 +60,12 @@ public class GenericService<T> : IGenericService<T> where T : class
 
         _dbSet.Remove(entity);
         await _context.SaveChangesAsync(cancellationToken);
+
+        string cacheKey = $"{typeof(T).Name}_{id}";
+        _cache.Remove(cacheKey);
+
         return true;
     }
-    
     public async Task<bool> LinkEntitiesAsync<TLink>(
         TLink linkEntity, 
         CancellationToken cancellationToken = default) 
@@ -70,8 +77,19 @@ public class GenericService<T> : IGenericService<T> where T : class
         return true;
     }
 
-    public async Task<bool> ExistsAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default)
+    public async Task<bool> ExistsAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        return await _context.Set<T>().AnyAsync(predicate, cancellationToken);
+        //Génère une 'clé'. 
+        string cacheKey = $"{typeof(T).Name}_{id}";
+        
+        //Vérifie si la clé existe déjà dans le cache.
+        if (_cache.TryGetValue(cacheKey, out bool resultatEnCache)) return resultatEnCache;
+        
+        var entity = await _context.Set<T>().FindAsync([id], cancellationToken);
+        var existsInDb = entity != null;
+        
+        //Met en cache pendant 5 minutes.
+        _cache.Set(cacheKey, existsInDb, TimeSpan.FromMinutes(5));
+        return existsInDb;
     }
 }

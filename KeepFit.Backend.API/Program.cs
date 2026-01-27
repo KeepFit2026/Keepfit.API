@@ -53,6 +53,9 @@ builder.Services.AddSwaggerGen(c =>
 
 builder.Services.AddControllers();
 
+//Sytème de Cache. 
+builder.Services.AddMemoryCache();
+
 builder.Services.AddAutoMapper(cfg => { }, typeof(MappingProfile).Assembly);
 
 builder.Services.AddScoped<IExerciseService, ExerciseService>();

@@ -49,5 +49,5 @@ public interface IGenericService<T> where T : class
     /// <param name="id">Id de l'entité</param>
     /// <param name="cancellationToken">cancellationToken.</param>
     /// <returns>True/False</returns>
-    Task<bool> ExistsAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default);
+    Task<bool> ExistsAsync(Guid id, CancellationToken cancellationToken = default);
 }
