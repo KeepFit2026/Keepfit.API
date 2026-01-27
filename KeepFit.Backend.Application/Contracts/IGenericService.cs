@@ -32,4 +32,22 @@ public interface IGenericService<T> where T : class
     /// <typeparam name="T">un type</typeparam>
     /// <returns></returns>
     Task<bool> DeleteAsync(Guid id, CancellationToken cancellationToken = default);
+    
+    /// <summary>
+    /// Ajoute une entité dans une autre (ex. un user dans une classe, un exercice dans un programme...)
+    /// </summary>
+    /// <param name="linkEntity"></param>
+    /// <param name="cancellationToken"></param>
+    /// <typeparam name="TLink"></typeparam>
+    /// <returns></returns>
+    Task<bool> LinkEntitiesAsync<TLink>(TLink linkEntity, CancellationToken cancellationToken = default) 
+        where TLink : class;
+    
+    /// <summary>
+    /// Vérifie si une élement Existe via son Id.
+    /// </summary>
+    /// <param name="id">Id de l'entité</param>
+    /// <param name="cancellationToken">cancellationToken.</param>
+    /// <returns>True/False</returns>
+    Task<bool> ExistsAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default);
 }

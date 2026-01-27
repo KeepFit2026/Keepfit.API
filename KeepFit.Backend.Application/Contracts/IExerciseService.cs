@@ -69,7 +69,6 @@ public interface IExerciseService : IContract<ExerciseResponse, ExerciseDto>
     /// <param name="cancellationToken">Cancellartion Token</param>
     /// <returns></returns>
     Task<bool> AddExerciseToProgramAsync(
-        PaginationFilter filter,
         Guid programId, Guid exerciseId, 
         CancellationToken cancellationToken = default);
 

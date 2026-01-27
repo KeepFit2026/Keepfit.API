@@ -4,6 +4,7 @@ using KeepFit.Backend.Application.DTOs.Requests;
 using KeepFit.Backend.Application.DTOs.Responses;
 using KeepFit.Backend.Application.DTOs.Users;
 using KeepFit.Backend.Domain.Exceptions;
+using KeepFit.Backend.Domain.Models;
 using KeepFit.Backend.Domain.Models.User;
 using KeepFit.Backend.Infrastructure;
 

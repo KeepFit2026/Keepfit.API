@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace KeepFit.Backend.API.Controller;
 
 [ApiController]
-[AuthorizeRole(UserRoles.Admin)]
+// [AuthorizeRole(UserRoles.Admin)]
 [Route("api/v1/exercises")]
 public class ExerciseController(IExerciseService service) : 
     BaseGenericController<IExerciseService, ExerciseResponse, ExerciseDto>(service)
@@ -75,7 +75,6 @@ public class ExerciseController(IExerciseService service) :
     /// <summary>
     /// Ajoute un exercice existant à un programme spécifique.
     /// </summary>
-    /// <param name="filter">Filtres de pagination (si applicable).</param>
     /// <param name="programId">Identifiant du programme cible.</param>
     /// <param name="exerciseId">Identifiant de l'exercice à ajouter.</param>
     /// <param name="cancellationToken">Token d’annulation.</param>
@@ -86,14 +85,13 @@ public class ExerciseController(IExerciseService service) :
     [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse<ProgramExerciseResponse>), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> AddExerciseToProgramAsync(
-        [FromQuery] PaginationFilter filter,
         [FromRoute] Guid exerciseId,
         [FromRoute] Guid programId,
         CancellationToken cancellationToken = default)
     {
         try
         {
-            await service.AddExerciseToProgramAsync(filter, programId, exerciseId, cancellationToken);
+            await service.AddExerciseToProgramAsync(programId, exerciseId, cancellationToken);
             return Ok(new ApiResponse<bool>(true, true, "Exercice ajouté !"));
         }
         catch (NotFoundException message)

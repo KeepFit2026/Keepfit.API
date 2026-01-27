@@ -137,35 +137,20 @@ public class ExerciseService(
     }
     
     public async Task<bool> AddExerciseToProgramAsync(
-        PaginationFilter filter,
         Guid programId, Guid exerciseId, CancellationToken cancellationToken = default)
     {
-        var program = await genericProgramService.GetAllAsync(
-            pageNumber: filter.PageNumber,
-            pageSize: filter.PageSize,
-            predicate: prog => prog.Id == programId,
-            cancellationToken: cancellationToken
-            );
+        var programExist = await genericProgramService.ExistsAsync(p => p.Id == programId, cancellationToken);
+        var exerciseExist = await genericService.ExistsAsync(ex => ex.Id == exerciseId, cancellationToken);
         
-        var exercise = await genericService.GetAllAsync(
-            pageNumber: filter.PageNumber,
-            pageSize: filter.PageSize,
-            predicate: ex => ex.Id == exerciseId,
-            cancellationToken: cancellationToken
-            );
+        if (!programExist || !exerciseExist)
+            throw new NotFoundException("Le programme ou l'exercice n'existe pas.");
         
-        if(program.TotalRecord == 0 || exercise.TotalRecord == 0)
-            throw new NotFoundException("Aucun élément trouvé.");
-
-        var programExercise = new ProgramExercise
+        var link = new ProgramExercise
         {
             ProgramId = programId,
-            ExerciseId = exerciseId,
+            ExerciseId = exerciseId
         };
-        
-        await context.ProgramExercise.AddAsync(programExercise, cancellationToken);
-        await context.SaveChangesAsync(cancellationToken);
 
-        return true;
+        return await genericService.LinkEntitiesAsync(link, cancellationToken);
     }
 }
