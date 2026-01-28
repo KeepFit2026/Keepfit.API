@@ -4,7 +4,6 @@ using KeepFit.Backend.Application.DTOs.Requests;
 using KeepFit.Backend.Application.DTOs.Responses;
 using KeepFit.Backend.Application.DTOs.Users;
 using KeepFit.Backend.Domain.Exceptions;
-using KeepFit.Backend.Domain.Models;
 using KeepFit.Backend.Domain.Models.User;
 using KeepFit.Backend.Infrastructure;
 
@@ -14,22 +13,26 @@ public class UserService(
     IGenericService<User> genericService,
     IMapper mapper,
     AppDbContext dbContext
-    ): IUserService
+    ) : BaseService<User, UserResponse, UserDto>(genericService, mapper), IUserService
 {
-    public async Task<PageApiResponse<List<UserResponse>>> GetAllAsync(
+    private readonly IGenericService<User> _genericService = genericService;
+    private readonly IMapper _mapper = mapper;
+
+    public override async Task<PageApiResponse<List<UserResponse>>> GetAllAsync(
         PaginationFilter filter,
         CancellationToken cancellationToken = default)
     {
-        var users = await genericService.GetAllAsync(
+        // On doit réimplémenter ici car on a besoin du 'includes: u => u.Role'
+        var users = await _genericService.GetAllAsync(
             pageNumber: filter.PageNumber,
             pageSize: filter.PageSize,
-            includes: u => u.Role,
+            includes: u => u.Role, 
             cancellationToken: cancellationToken);
         
         if(users.TotalRecord == 0) 
-            throw new NotFoundException("Aucun exercice trouve");
+            throw new NotFoundException("Aucun utilisateur trouvé");
         
-        var response = mapper.Map<List<UserResponse>>(users.Data);
+        var response = _mapper.Map<List<UserResponse>>(users.Data);
         
         return new PageApiResponse<List<UserResponse>>(
             response,
@@ -39,48 +42,30 @@ public class UserService(
             );
     }
 
-    public async Task<PageApiResponse<UserResponse>> GetAsync(
+    public override async Task<PageApiResponse<UserResponse>> GetAsync(
         PaginationFilter filter,
         Guid id,
         CancellationToken cancellationToken = default)
     {
-        var user = await genericService.GetAllAsync(
+        var result = await _genericService.GetAllAsync(
             pageNumber: filter.PageNumber,
             pageSize: filter.PageSize,
-            predicate: ex => ex.Id == id,
+            predicate: u => u.Id == id,
             includes: u => u.Role,
             cancellationToken: cancellationToken);
 
-        if (user.TotalRecord == 0) throw new NotFoundException("Aucun exercice trouve");
+        if (result.TotalRecord == 0) 
+            throw new NotFoundException("Aucun utilisateur trouvé");
         
-        var exercise = user.Data.First();
-        
-        var response = mapper.Map<UserResponse>(exercise);
+        var entity = result.Data.First();
+        var response = _mapper.Map<UserResponse>(entity);
 
         return new PageApiResponse<UserResponse>(
             response,
             filter.PageNumber,
             filter.PageSize,
-            user.TotalRecord
+            result.TotalRecord
         );
     }
 
-    public async Task<UserResponse> CreateAsync(
-        UserDto dto,
-        CancellationToken cancellationToken = default)
-    {
-        var entity = await genericService.CreateAsync(
-            mapper.Map<User>(dto), cancellationToken);
-            
-        return mapper.Map<UserResponse>(entity);
-    }
-
-    public async Task<bool> DeleteAsync(
-        Guid id, 
-        CancellationToken cancellationToken = default)
-    {
-        var result = await genericService.DeleteAsync(id, cancellationToken);
-        if(!result) throw new NotFoundException("Aucun exercice trouve");
-        return result;
-    }
 }

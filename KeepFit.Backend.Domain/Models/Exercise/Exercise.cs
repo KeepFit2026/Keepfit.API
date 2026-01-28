@@ -1,8 +1,9 @@
-﻿using KeepFit.Backend.Domain.Models.Program;
+﻿using KeepFit.Backend.Domain.contracts;
+using KeepFit.Backend.Domain.Models.Program;
 
 namespace KeepFit.Backend.Domain.Models.Exercise;
 
-public class Exercise
+public class Exercise : IEntity
 {
     /// <summary>
     /// Id de l'exercice

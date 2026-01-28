@@ -1,8 +1,9 @@
+using KeepFit.Backend.Domain.contracts;
 using KeepFit.Backend.Domain.Models.Program;
 
 namespace KeepFit.Backend.Domain.Models;
 
-public class Classroom
+public class Classroom : IEntity
 {
     /// <summary>
     /// Id de la classe

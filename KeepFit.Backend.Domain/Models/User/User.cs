@@ -1,6 +1,8 @@
+using KeepFit.Backend.Domain.contracts;
+
 namespace KeepFit.Backend.Domain.Models.User;
 
-public class User
+public class User : IEntity
 {
     /// <summary>
     /// Id de l'utilisateur

@@ -4,6 +4,7 @@ using KeepFit.Backend.API.Filter;
 using KeepFit.Backend.Application.Contracts;
 using KeepFit.Backend.Application.Mapping;
 using KeepFit.Backend.Application.Services;
+using KeepFit.Backend.Domain.Models;
 using KeepFit.Backend.Domain.Models.Program;
 using KeepFit.Backend.Domain.Models.Exercise;
 using KeepFit.Backend.Domain.Models.User;
@@ -66,6 +67,9 @@ builder.Services.AddScoped<IGenericService<FitnessProgram>, GenericService<Fitne
 
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IGenericService<User>, GenericService<User>>();
+
+builder.Services.AddScoped<IClassroomService, ClassroomService>();
+builder.Services.AddScoped<IGenericService<Classroom>, GenericService<Classroom>>();
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 

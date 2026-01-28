@@ -1,4 +1,3 @@
-using System.Linq.Expressions;
 using AutoMapper;
 using KeepFit.Backend.Application.Contracts;
 using KeepFit.Backend.Application.DTOs.Exercises;
@@ -14,81 +13,38 @@ namespace KeepFit.Backend.Application.Services;
 public class ExerciseService(
     IGenericService<Exercise> genericService,
     IGenericService<FitnessProgram> genericProgramService,
-    IMapper mapper,
-    AppDbContext context
-    ) : IExerciseService
+    IMapper mapper
+    ) : BaseService<Exercise, ExerciseResponse, ExerciseDto>(genericService, mapper), IExerciseService
 {
-    public async Task<PageApiResponse<List<ExerciseResponse>>> GetAllAsync(
+    private readonly IGenericService<Exercise> _genericService = genericService;
+    private readonly IMapper _mapper = mapper;
+
+    // OVERRIDE : On garde ta logique spécifique pour ajouter les liens
+    public override async Task<PageApiResponse<List<ExerciseResponse>>> GetAllAsync(
         PaginationFilter filter,
         CancellationToken cancellationToken = default)
     {
-        var exercises = await genericService.GetAllAsync(
-            pageNumber: filter.PageNumber,
-            pageSize: filter.PageSize,
-            predicate: null,
-            cancellationToken: cancellationToken);
-        
-        if(exercises.TotalRecord == 0) 
-            throw new NotFoundException("Aucun exercice trouve");
-        
-        var response = mapper.Map<List<ExerciseResponse>>(exercises.Data);
+        var pageResponse = await base.GetAllAsync(filter, cancellationToken);
 
-        foreach (var exercise in response)
+        //On ajoute ta logique de liens
+        foreach (var exercise in pageResponse.Data)
         {
             exercise.ProgramsLink = $"exercises/{exercise.Id}/programs";
         }
 
-        return new PageApiResponse<List<ExerciseResponse>>(
-            response,
-            filter.PageNumber,
-            filter.PageSize,
-            exercises.TotalRecord
-            );
+        return pageResponse;
     }
-
-    public async Task<PageApiResponse<ExerciseResponse>> GetAsync(
+    
+    public override async Task<PageApiResponse<ExerciseResponse>> GetAsync(
         PaginationFilter filter,
         Guid id,
         CancellationToken cancellationToken = default)
     {
-        var exercises = await genericService.GetAllAsync(
-            pageNumber: filter.PageNumber,
-            pageSize: filter.PageSize,
-            predicate: ex => ex.Id == id,
-            cancellationToken: cancellationToken);
+        var pageResponse = await base.GetAsync(filter, id, cancellationToken);
 
-        if (exercises.TotalRecord == 0) throw new NotFoundException("Aucun exercice trouve");
-        
-        var exercise = exercises.Data.First();
-        
-        var response = mapper.Map<ExerciseResponse>(exercise);
-        response.ProgramsLink = $"exercises/{response.Id}/programs";
+        pageResponse.Data.ProgramsLink = $"exercises/{pageResponse.Data.Id}/programs";
 
-        return new PageApiResponse<ExerciseResponse>(
-            response,
-            filter.PageNumber,
-            filter.PageSize,
-            exercises.TotalRecord
-        );
-    }
-
-    public async Task<ExerciseResponse> CreateAsync(
-        ExerciseDto dto,
-        CancellationToken cancellationToken = default)
-    {
-        var entity = await genericService.CreateAsync(
-            mapper.Map<Exercise>(dto), cancellationToken);
-            
-        return mapper.Map<ExerciseResponse>(entity);
-    }
-
-    public async Task<bool> DeleteAsync(
-        Guid id, 
-        CancellationToken cancellationToken = default)
-    {
-        var result = await genericService.DeleteAsync(id, cancellationToken);
-        if(!result) throw new NotFoundException("Aucun exercice trouve");
-        return result;
+        return pageResponse;
     }
 
     public async Task<PageApiResponse<List<ProgramResponse>>> GetProgramsFromExercise(
@@ -105,7 +61,7 @@ public class ExerciseService(
             cancellationToken: cancellationToken
         );
         
-        var response =  mapper.Map<List<ProgramResponse>>(result.Data);
+        var response =  _mapper.Map<List<ProgramResponse>>(result.Data);
         
         return new PageApiResponse<List<ProgramResponse>>(
             response,
@@ -127,7 +83,7 @@ public class ExerciseService(
             cancellationToken: cancellationToken
         );
         
-        var responseData = mapper.Map<List<ProgramResponse>>(result.Data);
+        var responseData = _mapper.Map<List<ProgramResponse>>(result.Data);
     
         return new PageApiResponse<List<ProgramResponse>>(
             responseData,
@@ -140,7 +96,7 @@ public class ExerciseService(
         Guid programId, Guid exerciseId, CancellationToken cancellationToken = default)
     {
         var programExist = await genericProgramService.ExistsAsync(programId, cancellationToken);
-        var exerciseExist = await genericService.ExistsAsync(exerciseId, cancellationToken);
+        var exerciseExist = await _genericService.ExistsAsync(exerciseId, cancellationToken); // Ici on utilise le genericService injecté dans le parent
         
         if (!programExist || !exerciseExist)
             throw new NotFoundException("Le programme ou l'exercice n'existe pas.");
@@ -150,7 +106,7 @@ public class ExerciseService(
             ProgramId = programId,
             ExerciseId = exerciseId
         };
-
-        return await genericService.LinkEntitiesAsync(link, cancellationToken);
+        
+        return await _genericService.LinkEntitiesAsync(link, cancellationToken);
     }
 }

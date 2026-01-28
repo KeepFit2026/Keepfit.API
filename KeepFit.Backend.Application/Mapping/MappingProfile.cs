@@ -1,9 +1,11 @@
 using AutoMapper;
+using KeepFit.Backend.Application.DTOs.Classroom;
 using KeepFit.Backend.Application.DTOs.Exercises;
 using KeepFit.Backend.Application.DTOs.Programs;
 using KeepFit.Backend.Application.DTOs.Responses;
 using KeepFit.Backend.Application.DTOs.Users;
 using KeepFit.Backend.Domain;
+using KeepFit.Backend.Domain.Models;
 using KeepFit.Backend.Domain.Models.Exercise;
 using KeepFit.Backend.Domain.Models.Program;
 using KeepFit.Backend.Domain.Models.User;
@@ -19,7 +21,9 @@ public class MappingProfile : Profile
 
         CreateMap<FitnessProgram, ProgramResponse>();
         CreateMap<ProgramDto, FitnessProgram>();
-
+        
+        CreateMap<Classroom, ClassroomResponse>();
+        CreateMap<ClassroomDto, Classroom>();
         
         CreateMap<User, UserResponse>()
             //Liaison avec RoleName et RoleId
