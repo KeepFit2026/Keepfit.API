@@ -1,9 +1,25 @@
 @KeepFit.Backend.API_HostAddress = http://localhost:5255
 
-@token = eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwMDAiLCJpYXQiOjE3Njk0NDExMDksImV4cCI6MTc2OTQ0NDcwOSwibmJmIjoxNzY5NDQxMTA5LCJqdGkiOiI2Wkg3QWpIS2VjQVFXdnRoIiwic3ViIjoiMyIsInBydiI6IjNkYTA0NTA3YWFkZjEzMmNlZTczMmZkZWU0ZWY2YWEzOTBkZWM1NzkiLCJBY2NvdW50SWQiOjMsImVtYWlsIjoicm9vdEBnbWFpbC5jb20iLCJyb2xlSWQiOjJ9.TkYWXjl7jFoUfw1bWGXNEkmjGSPjrpwoGZienUJMfA0
+@token = eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwMDAiLCJpYXQiOjE3Njk2NDc0NTUsImV4cCI6MTc2OTY1MTA1NSwibmJmIjoxNzY5NjQ3NDU1LCJqdGkiOiJYcTAzMzhSTDlSMnFqQU1nIiwic3ViIjoiNCIsInBydiI6IjNkYTA0NTA3YWFkZjEzMmNlZTczMmZkZWU0ZWY2YWEzOTBkZWM1NzkiLCJBY2NvdW50SWQiOjQsImVtYWlsIjoic3R1ZGVudEBnbWFpbC5jb20iLCJyb2xlSWQiOjJ9.tbEbuKmb6JrFdktOy6loqeHnj7Kkjawaf76Olzxz0FQ
+###
+
+GET http://localhost:5255/api/v1/users/GetAvailableUsers
+Authorization: Bearer {{token}}
+Accept: application/json
 
 ###
 
-GET http://localhost:5255/api/v1/exercises
+GET http://localhost:5255/api/v1/users/myconv
 Authorization: Bearer {{token}}
 Accept: application/json
+
+###
+
+POST http://localhost:5255/api/v1/chats/StartPrivateChat
+Authorization: Bearer {{token}}
+Accept: application/json
+Content-Type: application/json
+
+{
+  "targetUserId": 1
+}

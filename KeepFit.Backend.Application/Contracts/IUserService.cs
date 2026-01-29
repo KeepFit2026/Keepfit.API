@@ -40,4 +40,11 @@ public interface IUserService: IContract<UserResponse, UserDto>
     /// <param name="cancellationToken">CancellationToken</param>
     /// <returns></returns>
     Task<bool> DeleteAsync(Guid id, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Affiche les personnes avec qui l'on peut créer des conversations privé.
+    /// </summary>
+    /// <param name="myId"></param>
+    /// <returns></returns>
+    Task<PageApiResponse<List<UserResponse>>> GetUsersWithoutPrivateChatAsync(PaginationFilter filter, int myId, CancellationToken cancellation = default);
 }

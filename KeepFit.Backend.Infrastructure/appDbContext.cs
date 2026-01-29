@@ -1,4 +1,5 @@
 ﻿using KeepFit.Backend.Domain.Models;
+using KeepFit.Backend.Domain.Models.Chats;
 using KeepFit.Backend.Domain.Models.Exercise;
 using KeepFit.Backend.Domain.Models.Program;
 using KeepFit.Backend.Domain.Models.User;
@@ -18,8 +19,13 @@ public class AppDbContext : DbContext
     public DbSet<ProgramExercise> ProgramExercise { get; set; }
     public DbSet<User> User { get; set; }
     public DbSet<Role> Role { get; set; }
+    
     public DbSet<Classroom> Classroom { get; set; }
     public DbSet<ClassroomUser> ClassroomUser { get; set; }
+    
+    public DbSet<Conversation> Conversation { get; set; }
+    public DbSet<Message> Message { get; set; }
+    public DbSet<ConversationParticipant> ConversationParticipant { get; set; }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<ProgramExercise>()
@@ -60,5 +66,11 @@ public class AppDbContext : DbContext
                 .HasForeignKey(u => u.RoleId) 
                 .OnDelete(DeleteBehavior.Restrict);
         });
+        
+        modelBuilder.Entity<Message>()
+            .HasOne(m => m.Sender)
+            .WithMany(u => u.MessagesSent)
+            .HasForeignKey(m => m.SenderId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }
