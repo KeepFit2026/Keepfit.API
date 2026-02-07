@@ -1,6 +1,8 @@
+using KeepFit.Backend.Domain.contracts;
+
 namespace KeepFit.Backend.Domain.Models.Training;
 
-public class SeanceExercise
+public class SeanceExercise: IEntity
 {
     public Guid Id { get; set; }
     

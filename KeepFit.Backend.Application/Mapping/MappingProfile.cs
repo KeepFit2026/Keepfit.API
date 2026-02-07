@@ -23,6 +23,9 @@ public class MappingProfile : Profile
         CreateMap<Classroom, ClassroomResponse>();
         CreateMap<ClassroomDto, Classroom>();
         
+        CreateMap<MuscleGroup, MuscleGroupResponse>();
+        CreateMap<MuscleGroupDto, MuscleGroup>();
+        
         CreateMap<User, UserResponse>()
             //Liaison avec RoleName et RoleId
             .ForMember(dest => dest.RoleName,

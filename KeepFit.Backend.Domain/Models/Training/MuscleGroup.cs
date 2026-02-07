@@ -1,6 +1,8 @@
+using KeepFit.Backend.Domain.contracts;
+
 namespace KeepFit.Backend.Domain.Models.Training;
 
-public class MuscleGroup
+public class MuscleGroup: IEntity
 {
     public Guid Id { get; set; }
     
