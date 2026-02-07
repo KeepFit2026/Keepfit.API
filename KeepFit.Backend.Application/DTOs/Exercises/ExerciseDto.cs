@@ -1,3 +1,5 @@
+using KeepFit.Backend.Domain.Enums;
+
 namespace KeepFit.Backend.Application.DTOs.Exercises;
 
 public class ExerciseDto
@@ -11,4 +13,8 @@ public class ExerciseDto
     /// Description de l'exercice.
     /// </summary>
     public string Description { get; set; }
+    
+    public Difficulty Difficulty { get; set; }
+    
+    public Guid MuscleGroupId { get; set; }
 }

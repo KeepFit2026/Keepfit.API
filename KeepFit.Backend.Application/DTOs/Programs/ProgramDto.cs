@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace KeepFit.Backend.Application.DTOs.Programs
+﻿namespace KeepFit.Backend.Application.DTOs.Programs
 {
     public class ProgramDto
     {
@@ -17,6 +11,6 @@ namespace KeepFit.Backend.Application.DTOs.Programs
         /// Description du programme
         /// </summary>
         public string Description { get; set; }
-
+        
     }
 }

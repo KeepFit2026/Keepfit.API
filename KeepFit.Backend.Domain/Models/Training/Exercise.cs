@@ -1,7 +1,7 @@
 ﻿using KeepFit.Backend.Domain.contracts;
-using KeepFit.Backend.Domain.Models.Program;
+using KeepFit.Backend.Domain.Enums;
 
-namespace KeepFit.Backend.Domain.Models.Exercise;
+namespace KeepFit.Backend.Domain.Models.Training;
 
 public class Exercise : IEntity
 {
@@ -16,12 +16,16 @@ public class Exercise : IEntity
     public string Name { get; set; }
     
     /// <summary>
+    /// Difficulté de l'exerice.
+    /// </summary>
+    public Difficulty Difficulty {get; set;}
+    
+    /// <summary>
     /// Description de l'exercice
     /// </summary>
     public string Description { get; set; }
     
-    /// <summary>
-    /// Navigation vers la table de jointure
-    /// </summary>
-    public List<ProgramExercise> ProgramExercises { get; set; } = new List<ProgramExercise>();
+    public Guid MuscleGroupId { get; set; }
+    
+    public MuscleGroup MuscleGroup { get; set; }
 }

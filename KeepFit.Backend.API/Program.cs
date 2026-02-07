@@ -5,10 +5,7 @@ using KeepFit.Backend.API.Hubs;
 using KeepFit.Backend.Application.Contracts;
 using KeepFit.Backend.Application.Mapping;
 using KeepFit.Backend.Application.Services;
-using KeepFit.Backend.Domain.Models;
-using KeepFit.Backend.Domain.Models.Program;
-using KeepFit.Backend.Domain.Models.Exercise;
-using KeepFit.Backend.Domain.Models.User;
+using KeepFit.Backend.Domain.Models.Training;
 using KeepFit.Backend.Infrastructure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -70,6 +67,8 @@ builder.Services.AddScoped<IProgramService, ProgramService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IClassroomService, ClassroomService>();
 builder.Services.AddScoped<IChatService, ChatService>();
+builder.Services.AddScoped<IMuscleGroup, MuscleGroupService>();
+
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped(typeof(IGenericService<>), typeof(GenericService<>));
 

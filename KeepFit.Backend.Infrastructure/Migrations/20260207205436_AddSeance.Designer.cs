@@ -4,6 +4,7 @@ using KeepFit.Backend.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace KeepFit.Backend.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260207205436_AddSeance")]
+    partial class AddSeance
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -130,6 +133,21 @@ namespace KeepFit.Backend.Infrastructure.Migrations
                     b.ToTable("ClassroomUsers", (string)null);
                 });
 
+            modelBuilder.Entity("KeepFit.Backend.Domain.Models.Program.ProgramExercise", b =>
+                {
+                    b.Property<Guid>("ProgramId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ExerciseId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("ProgramId", "ExerciseId");
+
+                    b.HasIndex("ExerciseId");
+
+                    b.ToTable("ProgramExercises", (string)null);
+                });
+
             modelBuilder.Entity("KeepFit.Backend.Domain.Models.Training.Exercise", b =>
                 {
                     b.Property<Guid>("Id")
@@ -139,9 +157,6 @@ namespace KeepFit.Backend.Infrastructure.Migrations
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Difficulty")
-                        .HasColumnType("int");
 
                     b.Property<Guid>("MuscleGroupId")
                         .HasColumnType("uniqueidentifier");
@@ -167,7 +182,7 @@ namespace KeepFit.Backend.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool?>("IsActive")
+                    b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
                     b.Property<string>("Name")
@@ -206,7 +221,7 @@ namespace KeepFit.Backend.Infrastructure.Migrations
                     b.Property<int>("Duration")
                         .HasColumnType("int");
 
-                    b.Property<bool?>("IsActive")
+                    b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
                     b.Property<string>("Name")
@@ -353,6 +368,25 @@ namespace KeepFit.Backend.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("KeepFit.Backend.Domain.Models.Program.ProgramExercise", b =>
+                {
+                    b.HasOne("KeepFit.Backend.Domain.Models.Training.Exercise", "Exercise")
+                        .WithMany("ProgramExercises")
+                        .HasForeignKey("ExerciseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("KeepFit.Backend.Domain.Models.Training.FitnessProgram", "Program")
+                        .WithMany("ProgramExercises")
+                        .HasForeignKey("ProgramId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Exercise");
+
+                    b.Navigation("Program");
+                });
+
             modelBuilder.Entity("KeepFit.Backend.Domain.Models.Training.Exercise", b =>
                 {
                     b.HasOne("KeepFit.Backend.Domain.Models.Training.MuscleGroup", "MuscleGroup")
@@ -417,8 +451,15 @@ namespace KeepFit.Backend.Infrastructure.Migrations
                     b.Navigation("ClassroomUsers");
                 });
 
+            modelBuilder.Entity("KeepFit.Backend.Domain.Models.Training.Exercise", b =>
+                {
+                    b.Navigation("ProgramExercises");
+                });
+
             modelBuilder.Entity("KeepFit.Backend.Domain.Models.Training.FitnessProgram", b =>
                 {
+                    b.Navigation("ProgramExercises");
+
                     b.Navigation("Seances");
                 });
 
