@@ -17,6 +17,6 @@ namespace KeepFit.Backend.Application.DTOs.Programs
         /// Description du programme
         /// </summary>
         public string Description { get; set; }
-
+        
     }
 }

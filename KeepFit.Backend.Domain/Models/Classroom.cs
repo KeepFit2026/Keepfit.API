@@ -1,5 +1,4 @@
 using KeepFit.Backend.Domain.contracts;
-using KeepFit.Backend.Domain.Models.Program;
 
 namespace KeepFit.Backend.Domain.Models;
 

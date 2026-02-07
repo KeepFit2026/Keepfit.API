@@ -4,10 +4,8 @@ using KeepFit.Backend.Application.DTOs.Exercises;
 using KeepFit.Backend.Application.DTOs.Programs;
 using KeepFit.Backend.Application.DTOs.Responses;
 using KeepFit.Backend.Application.DTOs.Users;
-using KeepFit.Backend.Domain;
 using KeepFit.Backend.Domain.Models;
-using KeepFit.Backend.Domain.Models.Exercise;
-using KeepFit.Backend.Domain.Models.Program;
+using KeepFit.Backend.Domain.Models.Training;
 using KeepFit.Backend.Domain.Models.User;
 
 namespace KeepFit.Backend.Application.Mapping;

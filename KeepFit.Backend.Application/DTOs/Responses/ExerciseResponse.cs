@@ -1,3 +1,5 @@
+using KeepFit.Backend.Domain.Enums;
+
 namespace KeepFit.Backend.Application.DTOs.Responses;
 
 public class ExerciseResponse
@@ -17,8 +19,7 @@ public class ExerciseResponse
     /// </summary>
     public string Description { get; set; }
     
-    /// <summary>
-    /// Lien vers les programmes associés à l'exercice.
-    /// </summary>
-    public string ProgramsLink { get; set; }
+    public Guid MuscleGroupId { get; set; }
+    
+    public Difficulty Difficulty { get; set; }
 }

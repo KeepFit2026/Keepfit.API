@@ -1,6 +1,9 @@
-﻿namespace KeepFit.Backend.Domain.Models.Program
+﻿
+using KeepFit.Backend.Domain.contracts;
+
+namespace KeepFit.Backend.Domain.Models.Training
 {
-    public class FitnessProgram
+    public class FitnessProgram : IEntity
     {
         /// <summary>
         /// Id du programme
@@ -16,10 +19,9 @@
         /// Description du programme
         /// </summary>
         public string Description { get; set; }
+
+        public bool? IsActive { get; set; } = true;
         
-        /// <summary>
-        /// Navigation vers la table de jointure
-        /// </summary>
-        public List<ProgramExercise> ProgramExercises { get; set; } = new List<ProgramExercise>();
+        public List<Seance> Seances { get; set; } = new List<Seance>();
     }
 }

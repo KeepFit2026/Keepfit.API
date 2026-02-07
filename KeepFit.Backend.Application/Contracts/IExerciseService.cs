@@ -1,8 +1,6 @@
 using KeepFit.Backend.Application.DTOs.Exercises;
 using KeepFit.Backend.Application.DTOs.Requests;
 using KeepFit.Backend.Application.DTOs.Responses;
-using KeepFit.Backend.Domain.Models.Program;
-
 namespace KeepFit.Backend.Application.Contracts;
 
 public interface IExerciseService : IContract<ExerciseResponse, ExerciseDto>
@@ -40,36 +38,4 @@ public interface IExerciseService : IContract<ExerciseResponse, ExerciseDto>
     /// <param name="cancellationToken">CancellationToken</param>
     /// <returns></returns>
     Task<bool> DeleteAsync(Guid id, CancellationToken cancellationToken = default);
-    
-    /// <summary>
-    /// Récupère tous les programmes associés à cette exercice.
-    /// </summary>
-    /// <param name="exerciseId">Id de l'exercice.</param>
-    /// <param name="cancellationToken">Cancellation Token</param>
-    /// <returns></returns>
-    Task<PageApiResponse<List<ProgramResponse>>>  GetProgramsFromExercise(
-        PaginationFilter filter,
-        Guid exerciseId, CancellationToken cancellationToken = default);
-    
-    /// <summary>
-    /// Récupère tous les programmes qui n'appartiennent pas à un exercice.
-    /// </summary>
-    /// <param name="exerciseId">Id de l'exercice</param>
-    /// <param name="cancellationToken">Cancellation Token</param>
-    /// <returns></returns>
-    Task<PageApiResponse<List<ProgramResponse>>> GetProgramsWitoutNotExercises(
-        PaginationFilter filter, 
-        Guid exerciseId, CancellationToken cancellationToken = default);
-    
-    /// <summary>
-    /// Ajoute une exercice à un programme.
-    /// </summary>
-    /// <param name="programId">Id du programme</param>
-    /// <param name="exerciseId">Id de l'exercice</param>
-    /// <param name="cancellationToken">Cancellartion Token</param>
-    /// <returns></returns>
-    Task<bool> AddExerciseToProgramAsync(
-        Guid programId, Guid exerciseId, 
-        CancellationToken cancellationToken = default);
-
 }
